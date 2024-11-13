@@ -1,0 +1,33 @@
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: auto;
+}
+
+.home {
+    justify-content: center;
+    text-align: center;
+}
+.poster{
+    margin-top:65px;
+    width: 100%;
+}
+.registerNow a {
+    text-align: center;
+    color: #b820fe; 
+    text-shadow: 
+      0 0 5px #c13cff,
+      0 0 10px #c13cff,
+      0 0 20px #c13cff,
+      0 0 40px #c13cff,
+      0 0 80px #c13cff,
+      0 0 90px #c13cff,
+      0 0 100px #c13cff,
+      0 0 150px #c13cff;
+    font-family: 'Arial, sans-serif';
+    font-size: 4rem; 
+    text-align: center;
+  }
+  

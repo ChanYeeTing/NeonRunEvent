@@ -1,4 +1,5 @@
 
+
 body, html {
     margin: 0;
     padding: 0;
@@ -13,21 +14,79 @@ body, html {
 .poster{
     margin-top:65px;
     width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+@media (max-width: 768px) {
+    .poster {
+        margin-top: 50px;
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .poster {
+        margin-top: 40px;
+        width: 80%;
+    }
 }
 .registerNow a {
     text-align: center;
-    color: #b820fe; 
+    color: #c853ff; 
     text-shadow: 
       0 0 5px #c13cff,
       0 0 10px #c13cff,
       0 0 20px #c13cff,
       0 0 40px #c13cff,
-      0 0 80px #c13cff,
-      0 0 90px #c13cff,
-      0 0 100px #c13cff,
-      0 0 150px #c13cff;
+      0 0 80px #c13cff;
     font-family: 'Arial, sans-serif';
     font-size: 4rem; 
     text-align: center;
   }
-  
+  .introduce h2{
+    color: #ffffff;
+    margin-top: 95px;
+    font-size: 36px;
+    text-align: left;
+    margin-left: 9%;
+  }
+  .intro-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; 
+    gap: 20px; 
+    padding: 0 5%;
+  }
+  .introduce p{
+    flex: 1; /* Adjust the size dynamically */
+    min-width: 250px; /* Ensures a minimum size */
+    color: #ffffff;
+    margin-bottom: 40px;
+    max-width: 60%;
+    text-align: justify;
+    margin-left: 5%;
+  }
+  .introduce img{
+    margin-right: 5%;
+    width: 100%; /* Makes the image responsive */
+    max-width: 250px; /* Optional: set a max-width */
+    height: auto; /* Maintains aspect ratio */
+    border-radius: 8px; /* Optional: adds rounded corners */
+    object-fit: cover; /* Ensures content fits nicely */
+    margin-bottom: 5ch;
+  }
+
+  .package-container h2{
+    color: #ffffff;
+    margin-top: 95px;
+    font-size: 36px;
+    text-align: left;
+    margin-left: 9%;
+  }
+  .package-container img{
+    padding: 0 10%;
+    flex: 1;
+    height: auto;
+    max-width: 82%;
+  }

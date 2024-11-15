@@ -1,0 +1,81 @@
+.container{
+    width: 100px; /* Adjust size based on your design */
+    height: auto;
+    background: #c853ff;
+    padding: 1em; /* Ensure consistent spacing */
+    border-radius: 5%; /* Optional: round edges */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1em;
+    box-shadow: 
+    0 0 5px #c13cff,
+      0 0 10px #c13cff,
+      0 0 20px #c13cff,
+      0 0 40px #c13cff,
+      0 0 80px #c13cff;
+
+}
+.container .p1
+{
+    text-align: center;
+    color: yellow;
+    font-style: bold;
+    font-size: 20px;
+    margin: 0%;
+    background: none;
+}
+.container .p2
+{
+    text-align: center;
+    font-style: bold;
+    font-size: 35px;
+    color: white;
+    margin: 0;
+    background: none;
+
+}
+
+.containerCount{
+   
+    width:100% ;
+    height: auto;
+    background: black;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+.containerCount .containerCountDown
+{
+    width:100%;
+    height: auto;
+    background: black;
+    grid-column: 1; 
+    gap: 8px;
+    flex-direction: column;
+    place-items: center;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.containerCount .containerCountDown h1{
+    margin-top: 8%;
+    font-size: 50px ;
+    font-style: extrabold;
+    color:white;
+}
+.containerCount .containerCountDown .timer
+{
+    margin-top: 3%;
+    width: 100%;
+    display: flex; /* Make child elements (TimeBox) align side by side */
+    justify-content: center; /* Center the timer boxes */
+    gap: 2em; 
+    
+
+}

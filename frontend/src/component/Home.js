@@ -24,13 +24,13 @@ function Home()
                 the event seeks to educate the public on the dangers of smoking and the benefits of quitting. It serves as a powerful 
                 reminder of the importance of clean air and the positive impact of a tobacco-free environment on our health.
             </p>
-            <img src={intro} className='intro'/>
+            <img src={intro} className='intro' alt="Intro"/>
             </div>
         </div>
         <div className='package-container'>
             
             <h2>Package Provided</h2>
-            <img src={Runpackage}/>
+            <img src={Runpackage} alt="Package"/>
             <p></p>
 
         </div>

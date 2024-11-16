@@ -1,0 +1,106 @@
+body {
+    color: white;
+    background-color: #3a3a5c;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+  }
+  
+  .register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px;
+  }
+  
+  .register-form {
+    background-color: #2a2a44;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    width: 500px;
+    margin-top:55px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .register-form label {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #2a2a44;
+  }
+  
+  .register-form input[type="text"],
+  .register-form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 6px;
+    background-color: #f13deb;
+    color: white;
+    font-size: 14px;
+  }
+  
+  .register-form input::placeholder {
+    color: whitesmoke;
+  }
+  
+  .radio-group {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    background-color: #2a2a44;
+  }
+  
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-right: 10px;
+  }
+  
+  .radio-group input {
+    margin-right: 8px;
+  }
+  
+  .register-form button {
+    width: 30%;
+    padding: 12px;
+    background-color: #936fd7;
+    align-items: center;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .register-form button:hover {
+    background-color: #ba5e99;
+  }
+  
+  .error {
+    color: #ff7070;
+    background-color: #2a2a44;
+    font-size: 14px;
+    margin: 5px 0;
+    text-align: left;
+  }
+  
+  .running-image {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .running-image img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+  }
+  

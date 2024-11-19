@@ -90,3 +90,41 @@ body, html {
     height: auto;
     max-width: 82%;
   }
+
+  .map-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    gap: 40px;
+  }
+  
+  .map-image {
+    max-width: 90%;
+    margin-top: 7%;
+    margin-left: 10%;
+  }
+  
+  .map-image img {
+    width: 50%;
+    border: 5px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #0dc9f9;
+  }
+  
+  .map-content {
+    max-width: 50%;
+    text-align: center;
+  }
+  
+  .map-content h1 {
+    font-size: 28px;
+    color: #f9f871;
+    margin-bottom: 20px;
+  }
+  
+  .map-content p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }

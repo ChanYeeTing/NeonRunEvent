@@ -2,6 +2,7 @@ import './Home.css';
 import poster from "../image/background.png"
 import intro from "../image/neonRun.png"
 import Runpackage from "../image/package.jpg"
+import Map from "../image/map.jpg"
 import React from 'react';
 
 function Home()
@@ -33,6 +34,31 @@ function Home()
             <img src={Runpackage} alt="Package"/>
             <p></p>
 
+        </div>
+        <div class="map-container">
+            <div>
+                <img src={Map} className='map-image' alt='Map' />
+            </div>
+            <div class="map-content">
+                <h1>Hey, the Route Map is OUT!</h1>
+                <p>
+                Get ready for an unforgettable experience! Neon Run is a 5km run around USM main campus compound. You will be passing
+                by some "landmarks" in USM while completing the run! 
+                Immerse yourself in the energy and excitement as you dash through this unique event.
+                </p>
+                <p>
+                Don’t miss out on this incredible opportunity! 
+                Grab your spot now and be part of a vibrant journey filled with fun, fitness, and unforgettable memories. 
+                See you at the starting line!
+                </p>
+                <p>
+                If you have any enquiries, please don't hesitate to contact us, we are
+                here to assist you!
+                </p>
+                <p>
+                Refer to About Us to reach us!
+                </p>
+            </div>
         </div>
         </section>
     );

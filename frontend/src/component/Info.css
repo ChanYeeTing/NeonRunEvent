@@ -1,0 +1,25 @@
+body {
+    color: white;
+    margin: 0;
+    padding: 0;
+  }
+
+  .info-container{
+    color: #ffffff;
+    margin-top: 95px;
+    font-size: 36px;
+    text-align: left;
+    margin-left: 9%;
+  }
+
+  .info-container h2{
+    font-size: 36px;
+    margin-bottom: 30px;
+  }
+
+  .info-container p{
+    font-size: 18px;
+    line-height: 1.6;
+    margin-top: 50px;
+    margin-right: 7%;
+  }

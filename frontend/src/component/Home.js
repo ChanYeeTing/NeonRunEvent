@@ -40,7 +40,7 @@ function Home()
                 <img src={Map} className='map-image' alt='Map' />
             </div>
             <div class="map-content">
-                <h1>Hey, the Route Map is OUT!</h1>
+                <h2>Hey, the Route Map is OUT!</h2>
                 <p>
                 Get ready for an unforgettable experience! Neon Run is a 5km run around USM main campus compound. You will be passing
                 by some "landmarks" in USM while completing the run! 

@@ -1,0 +1,74 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.about-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; 
+    gap: 20px; 
+    margin-top: 68px;
+    width: 100%;
+}
+
+.about-container .about-us {
+    flex: 1;
+    max-width: 60%;
+    margin-left: 10%;
+    min-height: calc(100vh - 68px);
+}
+
+.about-container .about-us p {
+    color: #ffffff;
+    font-size: 14px;
+    text-align:justify;
+    margin-top: 2%;
+}
+
+.about-container .about-us h1 {
+    color: #ffffff;
+    font-size: 40px;
+    text-align: center;
+    margin-top: 8%;
+}
+
+.about-container .about-us h2
+{
+    margin-top: 6%;
+    text-align: center;
+}
+
+.about-container .contact-us
+{
+    flex: 1;
+    max-width: 60%;
+    margin-left: 10%;
+    width: 90%;
+    min-height: calc(100vh - 68px);
+    flex: 1;
+    background-image: url('../image/contact-us-background.jpg'); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+}
+
+.about-container .contact-us h1 {
+    color: #000000;
+    font-size: 40px;
+    text-align: center;
+    flex: 1;
+    background: none;
+    margin-top: 8%;
+}
+.about-container .contact-us p {
+    color: #000000;
+    font-size: 14px;
+    text-align:justify;
+    margin-top: 10%;
+    text-align: center;
+    text-decoration: none;
+}

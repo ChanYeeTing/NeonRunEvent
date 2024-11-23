@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useMemo } from 'react';
 import './CountDown.css'
 function CountDown ()
 {
-    const deadline = new Date('June 10 2025');
+    const deadline = useMemo(() => new Date(2025, 6, 10), []);
     const [days, setDays] = useState(0);
     const [timer, setTimer] = useState({
         hours: 0,

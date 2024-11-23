@@ -1,0 +1,81 @@
+/* General Reset */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+/* Auth Page Container */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Auth Form Styles */
+.auth-form {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.auth-form h2 {
+    margin-bottom: 20px;
+    color: hotpink;
+    background: none;
+}
+
+/* Form Input */
+.auth-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: none;
+}
+
+.auth-form input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: none;
+}
+
+/* Form Button */
+.auth-form button {
+    padding: 10px;
+    font-size: 16px;
+    color: white;
+    background-color: hotpink;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.auth-form button:hover {
+    background-color: rgb(255, 151, 203);
+}
+
+/* Toggle Link */
+.toggle-link {
+    color: hotpink;
+    cursor: pointer;
+    text-decoration: underline;
+    background: none;
+}
+
+.toggle-link:hover {
+    color: rgb(255, 171, 213);
+    
+}
+p{
+    background: none;
+    color: black;
+}

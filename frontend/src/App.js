@@ -6,6 +6,7 @@ import Info from './component/Info';
 import Register from './component/Register';
 import PostEvent from './component/PostEvent';
 import AboutUs from './component/AboutUS';
+import RegisterAccount from './component/RegisterAccount';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path='/info' exact Component={Info}/>
           <Route path='/post-event' exact Component={PostEvent}/>
           <Route path='/about-us' exact Component={AboutUs}/>
+          <Route path='/register-account' exact Component={RegisterAccount}/>
         </Routes>
       </header>
     </div>

@@ -52,7 +52,7 @@
 .containerCount .containerCountDown
 {
     width:100%;
-    height: auto;
+    height:100vh;
     background: black;
     grid-column: 1; 
     gap: 8px;

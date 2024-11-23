@@ -7,7 +7,7 @@ body {
   .info-container{
     color: #ffffff;
     background-color: black;
-    margin-top: 95px;
+    margin-top:65px;
     font-size: 36px;
     text-align: center;
     margin-left: 9%;
@@ -51,6 +51,7 @@ body {
     /* margin-right: 7%; */
     margin-bottom: 50px;
     text-align: center;
+    color: white;
   }
 
   /* .info-container ul{

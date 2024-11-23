@@ -13,7 +13,7 @@ function Navbar()
                 <a href='/post-event'>Post Event</a>
                 <a href='/about-us'>About Us</a>
             </nav>
-            <a href='/'>Username</a>
+            <a className="user" href='/register-account'>Log In</a>
         </header>
     )
 

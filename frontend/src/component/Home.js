@@ -2,6 +2,9 @@ import './Home.css';
 import poster from "../image/background.png"
 import intro from "../image/neonRun.png"
 import Runpackage from "../image/package.jpg"
+import TShirt from "../image/tshirt.jpg"
+import SizeChart from "../image/tshirtSizeChart.jpg"
+import Medal from "../image/medal.jpg"
 import Map from "../image/map.jpg"
 import React from 'react';
 
@@ -32,8 +35,22 @@ function Home()
             
             <h2>Package Provided</h2>
             <img src={Runpackage} alt="Package"/>
-            <p></p>
-
+            <br></br>
+            {/* <p>
+                There are two packages available for Neon Run. Race kit includes
+                neon light sticks and neon body paint, let you become the brightest star
+                of the night. Package A contains race kit, snacks, and medal for 
+                Top 150 finisher while Package B is the package add-on with a cool design T-shirt.
+            </p> */}
+            <h2>T-Shirt Design</h2>
+            <img src={TShirt} alt="T-shirt"/>
+            <br></br>
+            <h2>T-Sirt Size Chart</h2>
+            <img src={SizeChart} alt="Size Chart"/>
+            <br></br>
+            <h2>Medal Design for Top 150</h2>
+            <img src={Medal} alt="Medal"/>
+            <br></br>
         </div>
         <div class="map-container">
             <div>

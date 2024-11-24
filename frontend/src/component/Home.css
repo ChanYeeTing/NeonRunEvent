@@ -41,17 +41,24 @@ body, html {
     font-size: 4rem; 
     text-align: center;
   }
+  /* .introduce h1{
+    color: hotpink;
+    margin-top: 95px;
+    font-size: 48px;
+    text-align: left;
+    margin-left: 10%;
+  } */
   .introduce h2{
     color: #f9f871;
     margin-top: 95px;
     font-size: 36px;
     text-align: left;
-    margin-left: 9%;
+    margin-left: 12%;
   }
   .intro-container{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     flex-wrap: wrap; 
     gap: 20px; 
     padding: 0 5%;
@@ -62,31 +69,43 @@ body, html {
     color: #ffffff;
     margin-bottom: 40px;
     max-width: 60%;
+    line-height: 1.6;
     text-align: justify;
     margin-left: 5%;
+    margin-right: 50px;
   }
   .introduce img{
     margin-right: 5%;
     width: 100%; /* Makes the image responsive */
-    max-width: 250px; /* Optional: set a max-width */
+    max-width: 350px; /* Optional: set a max-width */
     height: auto; /* Maintains aspect ratio */
     border-radius: 8px; /* Optional: adds rounded corners */
     object-fit: cover; /* Ensures content fits nicely */
-    margin-bottom: 5ch;
+    margin-bottom: 5%;
   }
 
   .package-container h2{
     color: #f9f871;
     margin-top: 95px;
     font-size: 36px;
-    text-align: left;
-    margin-left: 9%;
+    text-align: center;
+    /* margin-left: 9%; */
+    margin-bottom: 20px;
   }
   .package-container img{
     padding: 0 10%;
     flex: 1;
     height: auto;
-    max-width: 82%;
+    max-width: 800px;
+  }
+  .package-container p{
+    font-size: 18px;
+    line-height: 1.6;
+    text-align: center;
+    margin-top: 20px;
+    margin-left: 5%;
+    margin-right: 5%;
+    color: white;
   }
 
   .map-container {

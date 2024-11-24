@@ -44,6 +44,9 @@ function Register() {
   return (
     <div className="register-container">
       <form className="register-form" onSubmit={handleSubmit}>
+        <h2>
+          Register as a participant now!
+        </h2>
         {/* Full Name */}
         <label>
           Full Name
@@ -111,7 +114,7 @@ function Register() {
             {errors.userType && <div className="error">{errors.userType}</div>}
         </label>
 
-        {/* MAtric Number */}
+        {/* Matric Number */}
         <label>
           Matric No.
           <input
@@ -197,6 +200,28 @@ function Register() {
             </div>
             {errors.package && <div className="error">{errors.package}</div>}
         </label>
+
+         {/* T-shirt Size (Conditional for Package B) */}
+         {formData.package === 'B' && (
+          <label>
+            T-shirt Size:
+            <div className="radio-group">
+              {['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'].map((size) => (
+                <label key={size}>
+                  <input
+                    type="radio"
+                    name="tshirtSize"
+                    value={size}
+                    checked={formData.tshirtSize === size}
+                    onChange={handleChange}
+                  />
+                  {size}
+                </label>
+              ))}
+            </div>
+            {errors.tshirtSize && <div className="error">{errors.tshirtSize}</div>}
+          </label>
+        )}
 
         {/* Submit Button */}
         <button type="submit">Submit</button>

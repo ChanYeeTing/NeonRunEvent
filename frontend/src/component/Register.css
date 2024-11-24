@@ -13,13 +13,21 @@ body {
     min-height: 100vh;
     padding: 40px;
   }
+
+  .register-container h2{
+    font-size: 36px;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #f9f871;
+    background-color: #2a2a44;
+  }
   
   .register-form {
     background-color: #2a2a44;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    width: 500px;
+    width: 40%;
     margin-top:55px;
     align-items: center;
     justify-content: space-between;

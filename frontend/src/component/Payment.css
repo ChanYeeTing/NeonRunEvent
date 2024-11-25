@@ -1,0 +1,102 @@
+/* Container for the entire payment form */
+.payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    padding: 20px;
+  }
+  
+  /* Form styles */
+  .payment-form {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  /* Form heading */
+  .payment-form h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  /* Paragraph below the heading */
+  .payment-form p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #555;
+  }
+  
+  /* QR code container */
+  .qr-code-container {
+    margin: 20px 0;
+  }
+  
+  /* QR code image */
+  .qr-code {
+    width: 200px;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Input label */
+  .payment-form label {
+    display: block;
+    margin-bottom: 15px;
+    text-align: left;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* File input */
+  .payment-form input[type="file"] {
+    display: block;
+    margin-top: 5px;
+    font-size: 14px;
+  }
+  
+  /* Submit button */
+  .payment-form button {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #d76fb1;
+    border: none;
+    border-radius: 4px;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Enable the button on valid input */
+  .payment-form button:enabled {
+    cursor: pointer;
+    opacity: 1;
+    background-color: #f9f871;
+  }
+  
+  /* Hover effect on enabled button */
+  .payment-form button:enabled:hover {
+    background-color: #e8e853;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .payment-form {
+      width: 90%;
+    }
+  
+    .qr-code {
+      width: 150px;
+    }
+  }
+  

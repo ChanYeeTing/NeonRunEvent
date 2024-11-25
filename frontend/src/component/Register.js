@@ -1,9 +1,11 @@
-// import CountDown from './CountDown';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import Runner from '../image/runner.png';
 
 function Register() {
+  const navigate = useNavigate(); 
+
   const [formData, setFormData] = useState({
     fullName: '',
     icNumber: '',
@@ -13,6 +15,7 @@ function Register() {
     package: '',
     year: '',
     school: '',
+    tshirtSize: '', 
   });
 
   const [errors, setErrors] = useState({});
@@ -22,12 +25,12 @@ function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleNext = (e) => {
     e.preventDefault();
 
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
-      if (!formData[key]) {
+      if (!formData[key] && !(key === 'tshirtSize' && formData.package !== 'B')) {
         newErrors[key] = 'This field is required';
       }
     });
@@ -36,17 +39,15 @@ function Register() {
       setErrors(newErrors);
     } else {
       setErrors({});
-      console.log('Form submitted:', formData);
-      alert('Registration successful!');
+      navigate('/payment');  // Navigate to payment if no errors
     }
   };
 
   return (
     <div className="register-container">
-      <form className="register-form" onSubmit={handleSubmit}>
-        <h2>
-          Register as a participant now!
-        </h2>
+      <form className="register-form" onSubmit={handleNext}>
+        <h2>Register as a participant now!</h2>
+
         {/* Full Name */}
         <label>
           Full Name
@@ -88,30 +89,30 @@ function Register() {
 
         {/* User Type */}
         <label>
-            Register as:
-            <div className="radio-group">
+          Register as:
+          <div className="radio-group">
             <label>
-                <input
+              <input
                 type="radio"
                 name="userType"
                 value="student"
                 checked={formData.userType === 'student'}
                 onChange={handleChange}
-                />
-                Student USM
+              />
+              Student USM
             </label>
             <label>
-                <input
+              <input
                 type="radio"
                 name="userType"
                 value="public"
                 checked={formData.userType === 'public'}
                 onChange={handleChange}
-                />
-                Public
+              />
+              Public
             </label>
-            </div>
-            {errors.userType && <div className="error">{errors.userType}</div>}
+          </div>
+          {errors.userType && <div className="error">{errors.userType}</div>}
         </label>
 
         {/* Matric Number */}
@@ -119,12 +120,12 @@ function Register() {
           Matric No.
           <input
             type="text"
-            name="icNumber"
+            name="school"
             placeholder="If you are not a USM student, put N/A"
-            value={formData.icNumber}
+            value={formData.school}
             onChange={handleChange}
           />
-          {errors.icNumber && <div className="error">{errors.icNumber}</div>}
+          {errors.school && <div className="error">{errors.school}</div>}
         </label>
 
         {/* Email */}
@@ -140,69 +141,36 @@ function Register() {
           {errors.email && <div className="error">{errors.email}</div>}
         </label>
 
-        {/* Year */}
-        <label>
-          Year
-          <div className="radio-group">
-            {['1', '2', '3', '4', 'N/A'].map((year) => (
-              <label key={year}>
-                <input
-                  type="radio"
-                  name="year"
-                  value={year}
-                  checked={formData.year === year}
-                  onChange={handleChange}
-                />
-                {year}
-              </label>
-            ))}
-          </div>
-          {errors.year && <div className="error">{errors.year}</div>}
-        </label>
-
-        {/* School */}
-        <label>
-          School
-          <input
-            type="text"
-            name="school"
-            placeholder="If you are not a USM student, put N/A"
-            value={formData.school}
-            onChange={handleChange}
-          />
-          {errors.school && <div className="error">{errors.school}</div>}
-        </label>
-
         {/* Package */}
         <label>
-            Package:
-            <div className="radio-group">
+          Package:
+          <div className="radio-group">
             <label>
-                <input
+              <input
                 type="radio"
                 name="package"
                 value="A"
                 checked={formData.package === 'A'}
                 onChange={handleChange}
-                />
-                A (RM20)
+              />
+              A (RM20)
             </label>
             <label>
-                <input
+              <input
                 type="radio"
                 name="package"
                 value="B"
                 checked={formData.package === 'B'}
                 onChange={handleChange}
-                />
-                B (RM35)
+              />
+              B (RM35)
             </label>
-            </div>
-            {errors.package && <div className="error">{errors.package}</div>}
+          </div>
+          {errors.package && <div className="error">{errors.package}</div>}
         </label>
 
-         {/* T-shirt Size (Conditional for Package B) */}
-         {formData.package === 'B' && (
+        {/* T-shirt Size (Conditional for Package B) */}
+        {formData.package === 'B' && (
           <label>
             T-shirt Size:
             <div className="radio-group">
@@ -223,8 +191,8 @@ function Register() {
           </label>
         )}
 
-        {/* Submit Button */}
-        <button type="submit">Submit</button>
+        {/* Next Button */}
+        <button type="submit">Next</button>
       </form>
 
       {/* Running Image */}

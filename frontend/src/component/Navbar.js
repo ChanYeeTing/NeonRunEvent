@@ -12,6 +12,7 @@ function Navbar()
                 <a href='/info'>Info</a>
                 <a href='/post-event'>Post Event</a>
                 <a href='/about-us'>About Us</a>
+                <a href='/payment'>Payment</a>
             </nav>
             <a className="user" href='/register-account'>Log In</a>
         </header>

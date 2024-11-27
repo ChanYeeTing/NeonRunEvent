@@ -20,23 +20,6 @@ function App() {
           <AppContent />
         </header>
       </div>
-    <div className="App">
-      <header className="App-header">
-        <Navbar/>
-        <Routes>
-          <Route path='/' exact Component={Home}/>
-          <Route path='/register' exact Component={Register}/>
-          <Route path='/info' exact Component={Info}/>
-          <Route path='/post-event' exact Component={PostEvent}/>
-          <Route path='/about-us' exact Component={AboutUs}/>
-          <Route path="/login" exact Component={Authentication} />
-          <Route path='/payment' exact Component={Payment}/>
-          <Route path= '/status' exact Component={Status}/>
-          <Route path="/admin-dashboard" exact Component={AdminDashboard} />
-
-        </Routes>
-      </header>
-    </div>
     </BrowserRouter>
   );
 }

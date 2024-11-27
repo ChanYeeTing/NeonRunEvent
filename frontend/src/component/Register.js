@@ -43,6 +43,10 @@ function Register() {
     }
   };
 
+  const toPayment = () => {
+    navigate("/payment");
+  };
+
   return (
     <div className="register-container">
       <form className="register-form" onSubmit={handleNext}>
@@ -192,7 +196,7 @@ function Register() {
         )}
 
         {/* Next Button */}
-        <button type="submit">Next</button>
+        <button type="submit" onClick={toPayment}>Next</button>
       </form>
 
       {/* Running Image */}

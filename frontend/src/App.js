@@ -8,6 +8,7 @@ import PostEvent from './component/PostEvent';
 import AboutUs from './component/AboutUS';
 import RegisterAccount from './component/RegisterAccount';
 import Payment from './component/Payment';
+import Status from './component/Status';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path='/about-us' exact Component={AboutUs}/>
           <Route path='/register-account' exact Component={RegisterAccount}/>
           <Route path='/payment' exact Component={Payment}/>
+          <Route path= '/status' exact Component={Status}/>
 
         </Routes>
       </header>

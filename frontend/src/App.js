@@ -8,10 +8,9 @@ import PostEvent from './component/PostEvent';
 import AboutUs from './component/AboutUS';
 import Authentication from './component/Authentication';
 import Payment from './component/Payment';
+import Status from './component/Status';
 import AdminDashboard from './component/AdminDashboard';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
-import Status from './component/Status';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
@@ -30,9 +29,10 @@ function App() {
           <Route path='/info' exact Component={Info}/>
           <Route path='/post-event' exact Component={PostEvent}/>
           <Route path='/about-us' exact Component={AboutUs}/>
-          <Route path='/register-account' exact Component={RegisterAccount}/>
+          <Route path="/login" exact Component={Authentication} />
           <Route path='/payment' exact Component={Payment}/>
           <Route path= '/status' exact Component={Status}/>
+          <Route path="/admin-dashboard" exact Component={AdminDashboard} />
 
         </Routes>
       </header>

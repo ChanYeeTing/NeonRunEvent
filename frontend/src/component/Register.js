@@ -29,11 +29,16 @@ function Register() {
     e.preventDefault();
 
     const newErrors = {};
+
     Object.keys(formData).forEach((key) => {
       if (!formData[key] && !(key === 'tshirtSize' && formData.package !== 'B')) {
         newErrors[key] = 'This field is required';
       }
     });
+
+    if (formData.package === 'B' && !formData.tshirtSize) {
+      newErrors.tshirtSize = 'Please select your t-shirt size';
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);

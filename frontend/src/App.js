@@ -40,6 +40,7 @@ function AppContent() {
         <Route path="/about-us" exact Component={AboutUs} />
         <Route path="/login" exact Component={Authentication} />
         <Route path="/payment" exact Component={Payment} />
+        <Route path="/status" exact Component={Status}/>
         <Route path="/admin-dashboard" exact Component={AdminDashboard} />
       </Routes>
     </>

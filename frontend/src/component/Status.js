@@ -1,10 +1,14 @@
 import React from 'react';
+import './Status.css';
 
 function Status() {
   return (
-    <div>
-      <h1>Status Page</h1>
-      <p>Your payment has been submitted successfully! We will update your status soon.</p>
+    <div className='status-container'>
+        <form className='status-form'>
+      <h2>Status Page</h2>
+      <p>Your payment has been submitted successfully!</p>
+      <p>Current Status: Waiting admin to approve your registration.</p>
+      </form>
     </div>
   );
 }

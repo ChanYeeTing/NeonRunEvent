@@ -24,9 +24,9 @@ function AboutUs()
             </div>
             <div className='contact-us'>
             <h1>Contact Us</h1>
-            <p><FaEnvelope size={30} color="#C13584" style={{ background: 'none' }} />contact@greenlungrun.com</p>
-            <p><FaFacebook size={30} color="#4267B2" style={{ background: 'none' }} />Green Lung USM</p>
-            <p><FaInstagram size={30} color="#C13584" style={{ background: 'none' }} />@usmgreenlung</p>
+            <p><FaEnvelope size={30} color="#C13584" style={{ verticalAlign: 'middle', background: 'none' }} /> contact@greenlungrun.com</p>
+            <p><FaFacebook size={30} color="#4267B2" style={{ verticalAlign: 'middle', background: 'none' }} /> Green Lung USM</p>
+            <p><FaInstagram size={30} color="#C13584" style={{ verticalAlign: 'middle', background: 'none' }} /> @usmgreenlung</p>
             
             </div>
             

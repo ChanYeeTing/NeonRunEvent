@@ -13,7 +13,6 @@ function Register() {
     email: '',
     userType: '',
     package: '',
-    year: '',
     school: '',
     tshirtSize: '', 
   });
@@ -39,12 +38,9 @@ function Register() {
       setErrors(newErrors);
     } else {
       setErrors({});
+      console.log(Object.keys(errors).length)
       navigate('/payment');  // Navigate to payment if no errors
     }
-  };
-
-  const toPayment = () => {
-    navigate("/payment");
   };
 
   return (
@@ -196,7 +192,7 @@ function Register() {
         )}
 
         {/* Next Button */}
-        <button type="submit" onClick={toPayment}>Next</button>
+        <button type="submit" >Next</button>
       </form>
 
       {/* Running Image */}

@@ -12,9 +12,15 @@
 }
 .logo
 {
-    font-size: 32px;
-    color: white;
-    font-weight: 700;
+    font-size: 30px;
+    font-weight: 500;
+    color: #bb00ff; 
+    text-shadow: 
+
+      0 0 10px #ef3cff,
+      0 0 20px #ef3cff,
+      0 0 40px #ef3cff,
+      0 0 80px #ef3cff;
 }
 .navBar a
 {
@@ -22,7 +28,7 @@
     font-size: 18px;
     color: white;
     font-weight: 500;
-    margin-left: 60px;
+    margin-right: 80px;
 }
 
 .navBar a::before

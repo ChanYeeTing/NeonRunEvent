@@ -9,6 +9,7 @@ import AboutUs from './component/AboutUS';
 import Authentication from './component/Authentication';
 import Payment from './component/Payment';
 import AdminDashboard from './component/AdminDashboard';
+import SideBar from './component/SideBar';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 function App() {
@@ -28,8 +29,7 @@ function AppContent() {
 
   return (
     <>
-      {!location.pathname.includes("admin") && <Navbar />}
-      
+      <Navbar />
 
       <Routes>
         <Route path="/" exact Component={Home} />
@@ -41,6 +41,9 @@ function AppContent() {
         <Route path="/payment" exact Component={Payment} />
         <Route path="/admin-dashboard" exact Component={AdminDashboard} />
       </Routes>
+
+      { location.pathname.includes("admin") && 
+            <SideBar/>}
     </>
   );
 }

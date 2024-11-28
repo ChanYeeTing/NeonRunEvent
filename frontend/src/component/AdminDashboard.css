@@ -1,3 +1,24 @@
 .admin-container p{
     color: white;
 }
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.dashboard {
+    padding: 20px;
+}
+
+.dashboard-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

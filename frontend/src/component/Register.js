@@ -43,7 +43,7 @@ function Register() {
       setErrors(newErrors);
     } else {
       setErrors({});
-      toPayment();  // Navigate to payment if no errors
+     navigate("/payment");  // Navigate to payment if no errors
     }
   };
 

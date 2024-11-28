@@ -11,8 +11,9 @@ function Register() {
     icNumber: '',
     contactNumber: '',
     email: '',
-    userType: '',
+    category: '',
     package: '',
+    year: '',
     school: '',
     tshirtSize: '', 
   });
@@ -91,16 +92,16 @@ function Register() {
           {errors.contactNumber && <div className="error">{errors.contactNumber}</div>}
         </label>
 
-        {/* User Type */}
+        {/* Category */}
         <label>
           Register as:
           <div className="radio-group">
             <label>
               <input
                 type="radio"
-                name="userType"
+                name="category"
                 value="student"
-                checked={formData.userType === 'student'}
+                checked={formData.category === 'student'}
                 onChange={handleChange}
               />
               Student USM
@@ -108,15 +109,15 @@ function Register() {
             <label>
               <input
                 type="radio"
-                name="userType"
+                name="category"
                 value="public"
-                checked={formData.userType === 'public'}
+                checked={formData.category === 'public'}
                 onChange={handleChange}
               />
               Public
             </label>
           </div>
-          {errors.userType && <div className="error">{errors.userType}</div>}
+          {errors.category && <div className="error">{errors.category}</div>}
         </label>
 
         {/* Matric Number */}
@@ -130,6 +131,26 @@ function Register() {
             onChange={handleChange}
           />
           {errors.school && <div className="error">{errors.school}</div>}
+        </label>
+
+        {/* Year */}
+        <label>
+          Year
+          <div className="radio-group">
+            {['1', '2', '3', '4', 'N/A'].map((year) => (
+              <label key={year}>
+                <input
+                  type="radio"
+                  name="year"
+                  value={year}
+                  checked={formData.year === year}
+                  onChange={handleChange}
+                />
+                {year}
+              </label>
+            ))}
+          </div>
+          {errors.year && <div className="error">{errors.year}</div>}
         </label>
 
         {/* Email */}

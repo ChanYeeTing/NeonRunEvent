@@ -8,6 +8,7 @@ import PostEvent from './component/PostEvent';
 import AboutUs from './component/AboutUS';
 import Authentication from './component/Authentication';
 import Payment from './component/Payment';
+import Status from './component/Status';
 import AdminDashboard from './component/AdminDashboard';
 import SideBar from './component/SideBar';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
@@ -39,6 +40,7 @@ function AppContent() {
         <Route path="/about-us" exact Component={AboutUs} />
         <Route path="/login" exact Component={Authentication} />
         <Route path="/payment" exact Component={Payment} />
+        <Route path="/status" exact Component={Status}/>
         <Route path="/admin-dashboard" exact Component={AdminDashboard} />
       </Routes>
 

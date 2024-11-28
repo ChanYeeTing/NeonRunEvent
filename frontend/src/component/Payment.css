@@ -1,95 +1,95 @@
-/* Container for the entire payment form */
 .payment-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f9f9f9;
     padding: 20px;
   }
   
-  /* Form styles */
   .payment-form {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
+    background-color: #2a2a44;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    width: 40%;
+    margin-top:55px;
+    align-items: center;
+    justify-content: space-between;
   }
   
-  /* Form heading */
   .payment-form h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: #333;
+    font-size: 36px;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #f9f871;
+    background-color: #2a2a44;
   }
   
-  /* Paragraph below the heading */
   .payment-form p {
     font-size: 16px;
     margin-bottom: 20px;
-    color: #555;
+    color: white
   }
   
-  /* QR code container */
   .qr-code-container {
     margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #2a2a44;
   }
   
-  /* QR code image */
   .qr-code {
-    width: 200px;
+    width: 300px;
     height: auto;
+    align-items: center;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+    margin-bottom: 10px;
   }
   
-  /* Input label */
   .payment-form label {
     display: block;
     margin-bottom: 15px;
-    text-align: left;
-    font-size: 14px;
-    color: #555;
-  }
-  
-  /* File input */
-  .payment-form input[type="file"] {
-    display: block;
-    margin-top: 5px;
-    font-size: 14px;
-  }
-  
-  /* Submit button */
-  .payment-form button {
-    width: 100%;
-    padding: 10px 15px;
     font-size: 16px;
-    color: #fff;
-    background-color: #d76fb1;
+    color: white;
+    background-color: #2a2a44;
+  }
+  
+  .payment-form input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
     border: none;
-    border-radius: 4px;
-    cursor: not-allowed;
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
+    border-radius: 6px;
+    background-color: hotpink;
+    color: white;
+    font-size: 14px;
   }
   
-  /* Enable the button on valid input */
-  .payment-form button:enabled {
+  .payment-form button {
+    width: 30%;
+    padding: 12px;
+    background-color: #936fd7;
+    align-items: center;
+    margin-right: 10px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    opacity: 1;
-    background-color: #f9f871;
+    transition: background-color 0.3s;
+    margin-top: 20px;
   }
   
-  /* Hover effect on enabled button */
   .payment-form button:enabled:hover {
-    background-color: #e8e853;
+    background-color: #ba5e99;
   }
   
-  /* Responsive Design */
   @media (max-width: 768px) {
     .payment-form {
       width: 90%;
@@ -99,4 +99,12 @@
       width: 150px;
     }
   }
+
+  .payment-form .error-message {
+    color: #ff7070;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  
   

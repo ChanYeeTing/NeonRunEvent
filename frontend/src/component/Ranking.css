@@ -1,0 +1,56 @@
+.ranking-container {
+    padding-left: 295px;
+    padding-top: 40px;
+    width: calc(100% - 320px);
+}
+
+.ranking-container h1 {
+    font-size: 28px;
+}
+
+.ranking-container .search-section {
+    margin-top: 3%;
+}
+
+.ranking-container h2 {
+    font-size: 18px;
+    margin-top: 3%;
+}
+
+.ranking-container .search {
+    margin-left: 2%;
+    background-color: hotpink;
+    padding: 5px;
+    border-radius: 10%;
+    border: none;
+    color: white;
+    width: 60px;
+}
+
+.ranking-container .clear {
+    margin-left: 1%;
+    color: hotpink;
+    background-color: white;
+    padding: 5px;
+    border-radius: 10%;
+    border: none;
+    width: 60px;
+}
+
+.ranking-container .ranking {
+    background-color: hotpink;
+    padding: 5px;
+    border-radius: 10%;
+    border: none;
+    color: white;
+    width: 100px;
+}
+
+.ranking-container .ranking:disabled {
+    background-color: rgb(250, 199, 224) !important;
+    padding: 5px;
+    border-radius: 10%;
+    border: none;
+    color: white;
+    width: 100px;
+}

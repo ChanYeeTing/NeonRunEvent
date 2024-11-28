@@ -1,0 +1,33 @@
+.list-container {
+    padding-left: 295px;
+    padding-top: 40px;
+    width: calc(100% - 320px);
+}
+.list-container h1 {
+    font-size: 28px;
+}
+
+.list-container .table {
+    width: 95%;
+    margin-top: 5%;
+}
+.list-container .filter {
+    margin-top: 5%;
+    text-align: center;
+}
+.list-container .filter-selection {
+    margin-right: 3%;
+    background-color: aliceblue;
+    padding: 2px;
+    border-radius: 10%;
+    width: 12%;
+}
+
+.list-container .clear-filter {
+    background-color: hotpink;
+    padding: 5px;
+    border-radius: 10%;
+    border: none;
+    color: white;
+}
+

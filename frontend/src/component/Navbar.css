@@ -2,7 +2,7 @@
     position: fixed;
     top:0;
     left: 0;
-    width: 96%;
+    width: 94%;
     padding: 10px 2%;
     background-color: black;
     display: flex;
@@ -16,7 +16,6 @@
     font-weight: 500;
     color: #bb00ff; 
     text-shadow: 
-
       0 0 10px #ef3cff,
       0 0 20px #ef3cff,
       0 0 40px #ef3cff,

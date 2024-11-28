@@ -11,6 +11,7 @@ import Payment from './component/Payment';
 import Status from './component/Status';
 import AdminDashboard from './component/AdminDashboard';
 import SideBar from './component/SideBar';
+import ParticipantList from './component/ParticipantList';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 function App() {
@@ -42,6 +43,7 @@ function AppContent() {
         <Route path="/payment" exact Component={Payment} />
         <Route path="/status" exact Component={Status}/>
         <Route path="/admin-dashboard" exact Component={AdminDashboard} />
+        <Route path="/admin-participant-list" exact Component={ParticipantList} />
       </Routes>
 
       { location.pathname.includes("admin") && 

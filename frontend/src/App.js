@@ -12,6 +12,7 @@ import Status from './component/Status';
 import AdminDashboard from './component/AdminDashboard';
 import SideBar from './component/SideBar';
 import ParticipantList from './component/ParticipantList';
+import Ranking from './component/Ranking';
 import KitCollection from './component/KitCollection';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
@@ -45,6 +46,7 @@ function AppContent() {
         <Route path="/status" exact Component={Status}/>
         <Route path="/admin-dashboard" exact Component={AdminDashboard} />
         <Route path="/admin-participant-list" exact Component={ParticipantList} />
+        <Route path="/admin-ranking-list" exact Component={Ranking} />
         <Route path="/admin-race-kit" exact Component={KitCollection} />
       </Routes>
 

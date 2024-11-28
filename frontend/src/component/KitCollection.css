@@ -1,0 +1,37 @@
+.kit-container {
+    padding-left: 295px;
+    padding-top: 40px;
+    width: calc(100% - 320px);
+}
+.kit-container h1 {
+    font-size: 28px;
+}
+
+.kit-container .search-bar {
+    margin-top: 60px;
+}
+
+.kit-container .table {
+    width: 95%;
+    margin-top: 30px;
+}
+.kit-container .filter {
+    margin-top: 5%;
+    text-align: center;
+}
+.kit-container .filter-selection {
+    margin-right: 3%;
+    background-color: aliceblue;
+    padding: 2px;
+    border-radius: 10%;
+    width: 12%;
+}
+
+.kit-container .clear-filter {
+    background-color: hotpink;
+    padding: 5px;
+    border-radius: 10%;
+    border: none;
+    color: white;
+}
+

@@ -12,6 +12,7 @@ import Status from './component/Status';
 import AdminDashboard from './component/AdminDashboard';
 import SideBar from './component/SideBar';
 import ParticipantList from './component/ParticipantList';
+import KitCollection from './component/KitCollection';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 function App() {
@@ -44,6 +45,7 @@ function AppContent() {
         <Route path="/status" exact Component={Status}/>
         <Route path="/admin-dashboard" exact Component={AdminDashboard} />
         <Route path="/admin-participant-list" exact Component={ParticipantList} />
+        <Route path="/admin-race-kit" exact Component={KitCollection} />
       </Routes>
 
       { location.pathname.includes("admin") && 

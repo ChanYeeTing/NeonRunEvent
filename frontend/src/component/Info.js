@@ -17,7 +17,7 @@ function Info()
                 <br></br>
                 Venue: Dewan Utama Pelajar A
             </h2>
-            <a href="https://maps.app.goo.gl/QZ5ywB4rDxknyMkk9">See in Google Map</a>
+            <a href="https://maps.app.goo.gl/QZ5ywB4rDxknyMkk9"><i>See in Google Map</i></a>
             <div>
             <img src={dupA} className='dupA' alt="DUP A" />
             </div>
@@ -71,7 +71,7 @@ function Info()
   <tbody>
     <tr>
       <td>7.30pm</td>
-      <td>Registration: Participants arrive at the running venue</td>
+      <td>Participants Registration</td>
     </tr>
     <tr>
       <td>7.45pm</td>

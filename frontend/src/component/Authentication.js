@@ -79,7 +79,7 @@ function Authentication() {
               onChange={handleInputChange}
               required
             />
-            <button type="submit">Admin Login</button>
+            <button type="submit">Login</button>
             {error && <p className="error-message">{error}</p>}
           </form>
         )}
@@ -93,7 +93,7 @@ function Authentication() {
               </span>{" "}
               <div style={{background:"none"}}>
               <span className="toggle-link" onClick={() => toggleAuthMode("admin")}>
-                Admin Login
+              <i>Login As Admin</i>
               </span>
               </div>
             </>
@@ -110,7 +110,7 @@ function Authentication() {
             <>
               Not an admin?{" "}
               <span className="toggle-link" onClick={() => toggleAuthMode("login")}>
-                Login
+                <i>Login As User</i>
               </span>
             </>
           )}

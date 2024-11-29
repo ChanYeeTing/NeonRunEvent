@@ -16,8 +16,6 @@ body {
 
   .info-container h1{
     text-align: center;
-    /* margin-right: 7%; */
-    /* color:#d76fb1; */
     color: hotpink;
   }
 
@@ -25,7 +23,6 @@ body {
     font-size: 36px;
     margin-bottom: 30px;
     text-align: center;
-    /* margin-right: 7%; */
     color: #f9f871;
   }
 
@@ -33,22 +30,20 @@ body {
     font-size: 24px;
     margin-top: 30px;
     text-align: center;
-    /* margin-right: 7%; */
     color: hotpink;
   }
   
   .info-container a{
     color: white;
     font-size: 18px;
-    /* margin-right: 7%; */
+    text-decoration: underline;
+
   }
 
   .info-container p{
     font-size: 18px;
     line-height: 1.5;
     margin-top: 50px;
-    /* margin-left: 5%; */
-    /* margin-right: 7%; */
     margin-bottom: 50px;
     text-align: center;
     color: white;
@@ -66,14 +61,12 @@ body {
 
   .info-container img{
     align-items: center;
-    /* margin-right: 7%; */
   }
 
   table {
-    width: 50%;
+    width: 550px;
     align-items: center;
     margin: 20px auto;
-    /* margin-right: 7%; */
     margin-bottom: 20px;
     border-collapse: collapse;
   }
@@ -81,7 +74,7 @@ body {
   caption {
     font-size: 36px;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     color: #f9f871;
   }
   

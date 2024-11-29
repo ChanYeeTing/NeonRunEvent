@@ -12,7 +12,7 @@
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    width: 40%;
+    width: 900px;
     margin-top:55px;
     align-items: center;
     justify-content: space-between;
@@ -20,14 +20,14 @@
   
   .payment-form h2 {
     font-size: 36px;
-    margin-bottom: 30px;
+    margin-bottom: 55px;
     text-align: center;
     color: #f9f871;
     background-color: #2a2a44;
   }
   
   .payment-form p {
-    font-size: 16px;
+    font-size: 18px;
     margin-bottom: 20px;
     color: white
   }
@@ -53,8 +53,8 @@
   
   .payment-form label {
     display: block;
-    margin-bottom: 15px;
-    font-size: 16px;
+    margin-bottom: 30px;
+    font-size: 18px;
     color: white;
     background-color: #2a2a44;
   }
@@ -67,7 +67,7 @@
     border-radius: 6px;
     background-color: hotpink;
     color: white;
-    font-size: 14px;
+    font-size: 16px;
   }
   
   .payment-form button {

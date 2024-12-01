@@ -2,6 +2,7 @@
     padding-left: 295px;
     padding-top: 40px;
     width: calc(100% - 320px);
+    
 }
 
 .ranking-container h1 {
@@ -9,7 +10,9 @@
 }
 
 .ranking-container .search-section {
-    margin-top: 3%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .ranking-container h2 {
@@ -17,23 +20,13 @@
     margin-top: 3%;
 }
 
-.ranking-container .search {
-    margin-left: 2%;
-    background-color: hotpink;
-    padding: 5px;
-    border-radius: 10%;
-    border: none;
-    color: white;
-    width: 60px;
-}
-
 .ranking-container .clear {
-    margin-left: 1%;
-    color: hotpink;
+    margin-left: 2%;
     background-color: white;
     padding: 5px;
     border-radius: 10%;
     border: none;
+    color: hotpink;
     width: 60px;
 }
 
@@ -53,4 +46,12 @@
     border: none;
     color: white;
     width: 100px;
+}
+
+.ranking-container .search-section .ic-search {
+    margin-right: 2%;
+    background-color: aliceblue;
+    padding: 2px;
+    border-radius: 10%;
+    width: 200px;
 }

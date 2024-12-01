@@ -1,19 +1,22 @@
 .list-container {
-    padding-left: 295px;
+    padding-left: 269px;
     padding-top: 40px;
-    width: calc(100% - 320px);
+    width: calc(100% - 268px);
 }
 .list-container h1 {
     font-size: 28px;
+    padding-left: 25px;
 }
 
 .list-container .table {
     width: 95%;
     margin-top: 5%;
+    padding-left: 25px;
 }
 .list-container .filter {
     margin-top: 5%;
     text-align: center;
+    padding-left: 25px;
 }
 .list-container .filter-selection {
     margin-right: 3%;
@@ -30,4 +33,65 @@
     border: none;
     color: white;
 }
+.action-container 
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-container .accept-button
+{
+    background-color: hotpink;
+    padding: 5px;
+    border-radius: 10%;
+    border: none;
+    color: white;
+    width: 60px;
+    cursor: pointer;
+}
+
+.action-container .reject-button
+{
+    background-color: white;
+    padding: 5px;
+    border-radius: 10%;
+    border: none;
+    color: hotpink;
+    width: 60px;
+    cursor: pointer;
+}
+
+.tabs {
+    margin-top: 3%;
+    text-align: center;
+    display: flex;
+    width: 100%;
+    /* margin-left: 2%; */
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    border: 1px solid #000000;
+    text-align: center;
+    font-size: 18px;
+}
+
+.tab-button.active {
+    background-color: hotpink;
+    color: white;
+    font-weight: bold;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+
+
+
 

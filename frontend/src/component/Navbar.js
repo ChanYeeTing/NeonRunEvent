@@ -23,8 +23,9 @@ function Navbar()
                 </div>
                 }
             </nav>
-            {! useLocation().pathname.includes("admin") && 
-            <a className="user" href='/login'>Log In</a>}
+            {! useLocation().pathname.includes("admin") ?
+            <a className="user" href='/login'>Log In</a>:
+            <a className="user" href='/'>Log Out</a>}
         </header>
     )
 

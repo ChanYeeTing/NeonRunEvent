@@ -13,24 +13,26 @@ const Ranking = () => {
         { id: 5, name: "Chris", icNumber: "031109-08-1274", contactNo: "011-78973242", category: "Student USM", matricNo: "157453", package: "B", tshirtSize: "XL", paymentFile: "View", rank: null }
     ]);
 
+  const [rank, setRank] = useState(1)
   const [icNumber, setIcNumber] = useState('');
   const [filteredParticipants, setFilteredParticipants] = useState(participants);
   const [rankingsAssigned, setRankingsAssigned] = useState(false);
   
 
-  const handleSearch = () => {
+  const handleSearch = (icNumber) => {
     const searchResults = participants.filter(participant =>
       participant.icNumber.includes(icNumber)
     );
     setFilteredParticipants(searchResults);
   };
 
-  let rank = 1;
   const assignRanks = () => {
     const updatedFiltered = filteredParticipants.map(participant => ({
       ...participant,
-      rank: rank++
-    }));
+      rank: rank
+    }),
+    setRank(rank+1)
+  );
 
     const updatedParticipants = participants.map(participant => {
         const filteredMatch = updatedFiltered.find(p => p.id === participant.id);
@@ -53,15 +55,18 @@ const Ranking = () => {
       <h1>Admin Ranking Page</h1>
 
       <div className='search-section'>
+      <label htmlFor="searchTerm">Search by IC Number: </label>
         <input
+          className='ic-search'
           type="text"
           value={icNumber}
-          onChange={(e) => setIcNumber(e.target.value)}
-          placeholder="Search by IC Number"
+          onChange={(e) => {setIcNumber(e.target.value); handleSearch(e.target.value);}}
+          placeholder="Enter participant's IC Number"
         />
-        <button className="search" onClick={handleSearch}>Search</button>
-        <button className='clear' onClick={()=> (setIcNumber(""), setFilteredParticipants(participants))}>Clear</button>
+              <button className="ranking" onClick={assignRanks} disabled={(rankingsAssigned, (filteredParticipants.length!==1))}>Assign Ranks</button>
+        <button className='clear' onClick={()=> {setIcNumber(""); setFilteredParticipants(participants);}}>Clear</button>
       </div>
+      
 
       <h2>Participants List</h2>
       <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -95,11 +100,6 @@ const Ranking = () => {
         </tbody>
       </table>
 
-      {/* Button to assign ranks */}
-      <button className="ranking" onClick={assignRanks} disabled={(rankingsAssigned, (filteredParticipants.length!==1))}>Assign Ranks</button>
-
-      {/* Confirmation message when ranks are assigned */}
-      {rankingsAssigned && <p>Ranks have been assigned successfully!</p>}
     </div>
   );
 };

@@ -3,12 +3,17 @@ import './ParticipantList.css';
 
 function ParticipantList() {
     const initialParticipants = [
-        { id: 1, name: "John", icNumber: "010912-04-0143", contactNo: "011-3489028", category: "Student USM", matricNo: "157329", package: "B", tshirtSize: "M", paymentFile: "View", status: "Pending" },
-        { id: 2, name: "Jane", icNumber: "050214-08-1321", contactNo: "012-6453243", category: "Student USM", matricNo: "158342", package: "A", tshirtSize: "N/A", paymentFile: "View", status: "Valid" },
-        { id: 3, name: "Mike", icNumber: "011021-06-0143", contactNo: "018-3234324", category: "Public", matricNo: "N/A", package: "B", tshirtSize: "S", paymentFile: "View", status: "Pending" },
-        { id: 4, name: "Emily", icNumber: "020502-04-0441", contactNo: "011-6754523", category: "Public", matricNo: "N/A", package: "B", tshirtSize: "M", paymentFile: "View", status: "Valid" },
-        { id: 5, name: "Chris", icNumber: "031109-08-1274", contactNo: "011-78973242", category: "Student USM", matricNo: "157453", package: "B", tshirtSize: "XL", paymentFile: "View", status: "Pending" }
-    ];
+        { id: 1, name: "John", icNumber: "010912-04-0143", contactNo: "011-3489028", category: "Student USM", matricNo: "157329", package: "B", tshirtSize: "M", paymentFile: "View", status: "Approved" },
+    { id: 2, name: "Jane", icNumber: "050214-08-1321", contactNo: "012-6453243", category: "Student USM", matricNo: "158342", package: "A", tshirtSize: "N/A", paymentFile: "View", status: "Approved" },
+    { id: 3, name: "Mike", icNumber: "011021-06-0143", contactNo: "018-3234324", category: "Public", matricNo: "N/A", package: "B", tshirtSize: "S", paymentFile: "View", status: "Approved" },
+    { id: 4, name: "Emily", icNumber: "020502-04-0441", contactNo: "011-6754523", category: "Public", matricNo: "N/A", package: "B", tshirtSize: "M", paymentFile: "View", status: "Approved" },
+    { id: 5, name: "Chris", icNumber: "031109-08-1274", contactNo: "011-78973242", category: "Student USM", matricNo: "157453", package: "B", tshirtSize: "XL", paymentFile: "View", status: "Approved" },
+    { id: 6, name: "Sarah", icNumber: "990816-10-1432", contactNo: "016-9823742", category: "Public", matricNo: "N/A", package: "C", tshirtSize: "L", paymentFile: "View", status: "Pending" },
+    { id: 7, name: "Ali", icNumber: "950324-07-1321", contactNo: "013-4567890", category: "Student USM", matricNo: "157894", package: "A", tshirtSize: "S", paymentFile: "View", status: "Pending" },
+    { id: 8, name: "Siti", icNumber: "000412-05-0123", contactNo: "017-8923748", category: "Student USM", matricNo: "158674", package: "C", tshirtSize: "M", paymentFile: "View", status: "Pending" },
+    { id: 9, name: "Tom", icNumber: "021223-09-8765", contactNo: "019-7283945", category: "Public", matricNo: "N/A", package: "B", tshirtSize: "L", paymentFile: "View", status: "Pending" },
+    { id: 10, name: "Jessica", icNumber: "030101-02-5432", contactNo: "012-7894321", category: "Public", matricNo: "N/A", package: "A", tshirtSize: "S", paymentFile: "View", status: "Pending" },
+    ]
 
     const [participants, setParticipants] = useState(initialParticipants);
     const [currentTab, setCurrentTab] = useState("Pending");
@@ -26,7 +31,7 @@ function ParticipantList() {
     const handleAccept = (id) => {
         setParticipants(prevParticipants =>
             prevParticipants.map(participant =>
-                participant.id === id ? { ...participant, status: "Valid" } : participant
+                participant.id === id ? { ...participant, status: "Approved" } : participant
             )
         );
     };
@@ -42,15 +47,12 @@ function ParticipantList() {
 
     // Separate participants by status
     const pendingParticipants = filteredParticipants.filter(p => p.status === "Pending");
-    const validParticipants = filteredParticipants.filter(p => p.status === "Valid");
+    const ApprovedParticipants = filteredParticipants.filter(p => p.status === "Approved");
 
     return (
         <div className="list-container">
             <h1>Participant List</h1>
             
-           
-
-            {/* Tab Navigation */}
             <div className="tabs">
                 <button
                     className={`tab-button ${currentTab === "Pending" ? "active" : ""}`}
@@ -59,10 +61,10 @@ function ParticipantList() {
                     Pending Participants
                 </button>
                 <button
-                    className={`tab-button ${currentTab === "Valid" ? "active" : ""}`}
-                    onClick={() => setCurrentTab("Valid")}
+                    className={`tab-button ${currentTab === "Approved" ? "active" : ""}`}
+                    onClick={() => setCurrentTab("Approved")}
                 >
-                    Valid Participants
+                    Approved Participants
                 </button>
             </div>
 
@@ -94,7 +96,6 @@ function ParticipantList() {
                 <button className="clear-filter" onClick={() => { setCategoryFilter(""); setPackageFilter(""); }}>Clear Filter</button>
             </div>
 
-            {/* Pending Participants Section */}
             {currentTab === "Pending" && (
                 <div className="tab-content">
                     <table border="1" className="table">
@@ -135,8 +136,7 @@ function ParticipantList() {
                 </div>
             )}
 
-            {/* Valid Participants Section */}
-            {currentTab === "Valid" && (
+            {currentTab === "Approved" && (
                 <div className="tab-content">
                     <table border="1" className="table">
                         <thead>
@@ -152,7 +152,7 @@ function ParticipantList() {
                             </tr>
                         </thead>
                         <tbody>
-                            {validParticipants.map(participant => (
+                            {ApprovedParticipants.map(participant => (
                                 <tr key={participant.id}>
                                     <td>{participant.name}</td>
                                     <td>{participant.icNumber}</td>

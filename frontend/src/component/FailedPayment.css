@@ -1,0 +1,58 @@
+.failed-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .failed-form {
+    background-color: #2a2a44;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    width: 900px;
+    margin-top:55px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .failed-form h2 {
+    font-size: 36px;
+    margin-bottom: 55px;
+    text-align: center;
+    color: #f9f871;
+    background-color: #2a2a44;
+  }
+
+  .failed-form h3 {
+    font-size: 24px;
+    text-align: left;
+    color: #ff7070;
+    background-color: #2a2a44;
+  }
+  
+  .failed-form p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: white
+  }
+
+  .failed-form button {
+    width: 30%;
+    padding: 12px;
+    background-color: #936fd7;
+    align-items: center;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .failed-form button:hover {
+    background-color: #ba5e99;
+  }
+  

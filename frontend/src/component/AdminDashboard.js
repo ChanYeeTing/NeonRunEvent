@@ -1,6 +1,6 @@
 import React from 'react';
 import './AdminDashboard.css';
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer  } from 'recharts';
 
 function AdminDashboard () {
     const participantData = {
@@ -12,6 +12,12 @@ function AdminDashboard () {
         packages: [
             { name: "A", value: 1 },
             { name: "B", value: 4 },
+        ],
+        tshirtSizes: [
+            { size: "S", count: 1 },
+            { size: "M", count: 2 },
+            { size: "L", count: 0 },
+            { size: "XL", count: 1 },
         ],
     };
 
@@ -69,6 +75,25 @@ function AdminDashboard () {
                         </PieChart>
                     </div>
                 </div>
+                <div className="bar-chart-box">
+                        <h2>T-Shirt Size Distribution</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                        <BarChart
+                            data={participantData.tshirtSizes}
+                            margin={{
+                                top: 20, right: 30, left: 20, bottom: 5,
+                            }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="size" 
+                            stroke="#ffffff" />
+                            <YAxis stroke="#ffffff" />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="count" fill="hotpink" />
+                        </BarChart>
+                        </ResponsiveContainer>
+                    </div>
             </div>
         </div>
     );

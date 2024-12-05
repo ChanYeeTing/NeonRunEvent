@@ -48,13 +48,7 @@ body, html {
     text-align: left;
     margin-left: 10%;
   } */
-  .introduce h2{
-    color: #f9f871;
-    margin-top: 95px;
-    font-size: 36px;
-    text-align: left;
-    margin-left: 12%;
-  }
+
   .intro-container{
     display: flex;
     align-items: center;
@@ -63,24 +57,36 @@ body, html {
     gap: 20px; 
     padding: 0 5%;
   }
-  .introduce p{
-    flex: 1; /* Adjust the size dynamically */
-    min-width: 250px; /* Ensures a minimum size */
+  .intro-container .introdution
+  {
+    flex: 1;
+  }
+  .intro-container .introdution p{
+    min-width: 250px; 
     color: #ffffff;
     margin-bottom: 40px;
-    max-width: 60%;
+    max-width: 80%;
     line-height: 1.6;
     text-align: justify;
     margin-left: 5%;
     margin-right: 50px;
   }
-  .introduce img{
+
+  .intro-container .introdution h2{
+    color: #f9f871;
+    font-size: 36px;
+    text-align: left;
+    margin-left: 5%;
+  }
+
+  .intro-container img{
+    padding-top: 5%;
     margin-right: 5%;
-    width: 100%; /* Makes the image responsive */
-    max-width: 350px; /* Optional: set a max-width */
-    height: auto; /* Maintains aspect ratio */
-    border-radius: 8px; /* Optional: adds rounded corners */
-    object-fit: cover; /* Ensures content fits nicely */
+    width: 100%; 
+    max-width: 300px; 
+    height: auto; 
+    border-radius: 8px; 
+    object-fit: cover; 
     margin-bottom: 5%;
   }
 

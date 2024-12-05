@@ -43,3 +43,9 @@
     font-size: 18px;
     text-align: center;
 }
+
+.dashboard .bar-chart-box h2 {
+    font-size: 18px;
+    text-align: center;
+    margin-top: 3%;
+}

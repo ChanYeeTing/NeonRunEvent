@@ -24,9 +24,25 @@ function AboutUs()
             </div>
             <div className='contact-us'>
             <h1>Contact Us</h1>
-            <p><FaEnvelope size={30} color="#C13584" style={{ verticalAlign: 'middle', background: 'none' }} /> contact@greenlungrun.com</p>
-            <p><a href='https://www.facebook.com/USMGreenLung/'><FaFacebook size={30} color="#4267B2" style={{ verticalAlign: 'middle', background: 'none' }} /> Green Lung USM</a></p>
-            <p><a href='https://www.instagram.com/usmgreenlung/'><FaInstagram size={30} color="#C13584" style={{ verticalAlign: 'middle', background: 'none' }} /> @usmgreenlung </a></p>
+            <p>
+  <FaEnvelope size={30} color="#C13584" style={{ verticalAlign: 'middle', background: 'none' }} /> 
+  <a href="mailto:contact@greenlungrun.com" style={{ textDecoration: 'none', color: 'black' }}>
+    contact@greenlungrun.com
+  </a>
+</p>
+<p>
+  <FaFacebook size={30} color="#4267B2" style={{ verticalAlign: 'middle', background: 'none' }} /> 
+  <a href="https://www.facebook.com/USMGreenLung" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'black' }}>
+    Green Lung USM
+  </a>
+</p>
+<p>
+  <FaInstagram size={30} color="#C13584" style={{ verticalAlign: 'middle', background: 'none' }} /> 
+  <a href="https://www.instagram.com/usmgreenlung" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'black' }}>
+    @usmgreenlung
+  </a>
+</p>
+
             
             </div>
             

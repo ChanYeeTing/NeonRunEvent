@@ -28,17 +28,17 @@ body, html {
         width: 80%;
     }
 }
-.registerNow a {
+.registerNow button {
+  background-color: hotpink;
+  border: 1px solid hotpink ;
+  border-radius: 15px;
+  padding: 20px;
     text-align: center;
-    color: hotpink; 
+    color:white; 
     text-shadow: 
-      0 0 5px #c13cff,
-      0 0 10px #c13cff,
-      0 0 20px #c13cff,
-      0 0 40px #c13cff,
-      0 0 80px #c13cff;
+      0 0 10px #f9f871;
     font-family: 'Arial, sans-serif';
-    font-size: 4rem; 
+    font-size: 3rem; 
     text-align: center;
   }
   /* .introduce h1{

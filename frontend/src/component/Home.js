@@ -7,16 +7,22 @@ import SizeChart from "../image/tshirtSizeChart.jpg"
 import Medal from "../image/medal.jpg"
 import Map from "../image/map.jpg"
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Home()
 {
+    const navigate = useNavigate();
+    const registerButton = () =>
+    {
+        navigate("/register");
+    }
     return(
         <section className="home">
         <div>
             <img src={poster} className="poster" alt="Poster" />
         </div>
         <div className="registerNow">
-            <a href="/register">Register Now</a>
+            <button onClick={()=>registerButton()}>Register Now</button>
         </div>
         <div className="introduce">
             <h2>What is WNTD Festive Neon Run?</h2>

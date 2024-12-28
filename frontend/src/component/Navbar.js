@@ -1,9 +1,11 @@
 import React from 'react';
 import './Navbar.css'
 import { useLocation } from 'react-router-dom';
+import { useUser } from "./UserContext";
 
 function Navbar()
 {
+    const { user } = useUser();
     return(
         <header className="header">
             {! useLocation().pathname.includes("admin") ? 
@@ -23,9 +25,14 @@ function Navbar()
                 </div>
                 }
             </nav>
-            {! useLocation().pathname.includes("admin") ?
+            {/* {! useLocation().pathname.includes("admin") ?
             <a className="user" href='/login'>Log In</a>:
-            <a className="user" href='/'>Log Out</a>}
+            <a className="user" href='/'>Log Out</a>} */}
+            {user ? (
+                <p className='userName'>{user.displayName}</p>
+            ) : (
+                <a className="user" href='/login'>Log In</a>
+            )}
         </header>
     )
 

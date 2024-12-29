@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import './ParticipantList.css';
+import { participantList } from "../utils/api";
 
 function ParticipantList() {
+   
+   participantList().then((data) => {
+    console.log('Participants:', data.users);
+  })
+  .catch((error) => {
+    console.error('Error:', error.message);
+  });
+
+  
+
     const initialParticipants = [
         { id: 1, name: "John", icNumber: "010912-04-0143", contactNo: "011-3489028", category: "Student USM", matricNo: "157329", package: "B", tshirtSize: "M", paymentFile: "/images/payment1.jpg", status: "Approved" },
     { id: 2, name: "Jane", icNumber: "050214-08-1321", contactNo: "012-6453243", category: "Student USM", matricNo: "158342", package: "A", tshirtSize: "N/A", paymentFile: "/images/payment1.jpg", status: "Approved" },

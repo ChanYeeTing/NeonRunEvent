@@ -3,17 +3,19 @@ import "./Authentication.css";
 import { useNavigate } from "react-router-dom";
 import { register, login, adminLogin } from "../utils/api"; // Import API functions
 import { useUser } from "./UserContext";
-import { jwtDecode } from "jwt-decode";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, updateProfile } from "firebase/auth";
 import { auth } from "../firebase/firebase-init";
+import { getAuth, sendEmailVerification, createUserWithEmailAndPassword } from "firebase/auth";
+import { doc,setDoc } from "firebase/firestore";
+import { db } from "../firebase/firebase-init";
 
 function Authentication() {
   const navigate = useNavigate();
   const [authMode, setAuthMode] = useState("login"); // "login", "register", "admin"
   const [credentials, setCredentials] = useState({ userName: "", email: "", password: "" });
   const [error, setError] = useState("");
-  const {setUser} = useUser();
-
+  const {setRole} = useUser();
+  const user = getAuth().currentUser;
   const toggleAuthMode = (mode) => {
     setAuthMode(mode);
     setError("");
@@ -25,27 +27,23 @@ function Authentication() {
   };
 
   const handleRegister = async (e) => {
+    setError("");
     e.preventDefault();
     try {
-      const data = await register({
+      const userCredential = await createUserWithEmailAndPassword(auth, credentials.email, credentials.password);
+      const user = userCredential.user;
+      setRole("user");
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        userName: credentials.userName,
         email: credentials.email,
         password: credentials.password,
-        userName: credentials.userName,
+        role: "user"
       });
+      await sendEmailVerification(user);
+      await updateProfile(user, { displayName: credentials.userName });
 
-      alert(data.message);
-      localStorage.setItem("authToken", data.token);
-
-      // Decode the token to get user info
-      const decoded = jwtDecode(data.token);
-      
-      // Update the user context with the decoded information
-      setUser({
-        uid: decoded.uid,
-        email: decoded.email,
-        displayName: credentials.userName,
-        role: "user", 
-      });
+      alert("User registered successfully. Verify email to log in.");
+      setAuthMode("login");
     } catch (err) {
       setError(err.message);
     }
@@ -62,22 +60,10 @@ function Authentication() {
       });
 
       if (data.token) {
+        await setPersistence(auth, browserLocalPersistence);
         await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
         // Handle successful login
         alert("Login successful!");
-
-              // Store the token in localStorage
-      localStorage.setItem("authToken", data.token);
-
-      // Decode the token to get user info
-      const decoded = jwtDecode(data.token);
-
-      // Update the user context with the decoded information
-      setUser({
-        uid: decoded.uid,
-        email: decoded.claims.email,
-        role: decoded.claims.role, // If you store role in Firestore or Firebase
-      });
 
       navigate("/"); // Redirect to homepage after successful login
       } else {
@@ -102,22 +88,10 @@ function Authentication() {
 
       if(data.token)
       {
+        await setPersistence(auth, browserLocalPersistence);
         await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
         alert("Login successful!");
-
-      // Store the token in localStorage
-      localStorage.setItem("authToken", data.token);
-
-      // Decode the token to get user info
-      const decoded = jwtDecode(data.token);
-
-      // Update the user context with the decoded information
-      setUser({
-        uid: decoded.uid,
-        email: decoded.claims.email,
-        role: decoded.claims.role, // If you store role in Firestore or Firebase
-      });
-
+        setRole("admin");
       navigate("/admin-dashboard"); // Redirect to homepage after successful login
       }
       

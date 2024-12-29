@@ -15,33 +15,22 @@ app.use(cors(corsOptions));
 
 // Register User
 router.post("/api/register", async (req, res) => {
-  const { email, password, userName } = req.body;
+  const { user } = req.body;
   try {
-    const userRecord = await auth.createUser({
-      email,
-      password,
-      displayName: userName,
-    });
-
     // Send email verification
-    await auth.updateUser(userRecord.uid, { emailVerified: false });
+    await auth.updateUser(user, { emailVerified: false });
 
     // Save user to Firestore
-    await db.collection("users").doc(userRecord.uid).set({
+    await db.collection("users").doc(user).set({
       userName,
       email,
       role: "user",
     });
 
-    const customClaims = {
-      email: userRecord.email,
-      role: "user",
-    };
-
-    const token = await auth.createCustomToken(userRecord.uid, customClaims);
 
 
-    res.status(200).json({ message: "User registered successfully. Verify email to log in.", token });
+    res.status(200).json({ message: "User registered successfully. Verify email to log in." });
+
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -102,5 +91,19 @@ router.post("/api/admin-login", async (req, res) => {
     res.status(400).json({ error: "Login failed. Please try again." });
   }
 });
+
+router.get("/api/participantList", async (req, res) => {
+  try {
+
+    const userSnapshot = await db.collection("users").where("status", "!=", null).get();
+    const users = userSnapshot.docs.map((doc) => doc.data());
+
+    res.status(200).json({ users });
+  } catch (error) {
+    console.error("Error fetching participants:", error);
+    res.status(500).json({ error: "Failed to fetch participants" });
+  }
+});
+
 
 module.exports = router;

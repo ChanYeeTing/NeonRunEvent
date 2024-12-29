@@ -79,3 +79,7 @@ p{
     background: none;
     color: black;
 }
+.error-message 
+{
+    color: red;
+}

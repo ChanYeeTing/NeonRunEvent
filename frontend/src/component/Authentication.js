@@ -1,27 +1,22 @@
 import React, { useState } from "react";
 import "./Authentication.css";
 import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase/firebase-init";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  updateProfile
-} from "firebase/auth";
+import { register, login, adminLogin } from "../utils/api"; // Import API functions
 import { useUser } from "./UserContext";
-import { doc, setDoc } from "firebase/firestore";
+import { jwtDecode } from "jwt-decode";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase/firebase-init";
 
 function Authentication() {
   const navigate = useNavigate();
   const [authMode, setAuthMode] = useState("login"); // "login", "register", "admin"
-  const [credentials, setCredentials] = useState({ userName:"", email: "", password: "" });
+  const [credentials, setCredentials] = useState({ userName: "", email: "", password: "" });
   const [error, setError] = useState("");
-  const { setUser } = useUser();
+  const {setUser} = useUser();
 
   const toggleAuthMode = (mode) => {
     setAuthMode(mode);
-    setError(""); // Clear error when switching modes
-    console.log(auth);
+    setError("");
   };
 
   const handleInputChange = (e) => {
@@ -29,48 +24,109 @@ function Authentication() {
     setCredentials({ ...credentials, [name]: value });
   };
 
-  const handleLogin = async (e) => {
-  e.preventDefault();
-
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
-    const user = userCredential.user;
-
-    if (user.emailVerified) {
-      alert("Login successful!");
-      navigate("/");
-    } else {
-      alert("Please verify your email before logging in.");
-    }
-  } catch (error) {
-    console.error("Login error:", error.message);
-    setError(error.message);
-  }
-};
-
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, credentials.email, credentials.password);
-      const user = userCredential.user;
-      await sendEmailVerification(user);
-
-      setUser(user);
-      await updateProfile(user, { displayName: credentials.userName });
-
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        userName: credentials.userName,
+      const data = await register({
         email: credentials.email,
-        password: credentials.password
+        password: credentials.password,
+        userName: credentials.userName,
       });
-      alert("Registration successful! Please verify your email to log in.");
-      toggleAuthMode("login"); // Switch to login after successful registration
+
+      alert(data.message);
+      localStorage.setItem("authToken", data.token);
+
+      // Decode the token to get user info
+      const decoded = jwtDecode(data.token);
+      
+      // Update the user context with the decoded information
+      setUser({
+        uid: decoded.uid,
+        email: decoded.email,
+        displayName: credentials.userName,
+        role: "user", 
+      });
     } catch (err) {
-      console.log(err.message);
-      setError("Registration failed. Please try again.");
+      setError(err.message);
     }
   };
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+     
+      const data = await login({
+        email: credentials.email,
+        password: credentials.password,
+      });
+
+      if (data.token) {
+        await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
+        // Handle successful login
+        alert("Login successful!");
+
+              // Store the token in localStorage
+      localStorage.setItem("authToken", data.token);
+
+      // Decode the token to get user info
+      const decoded = jwtDecode(data.token);
+
+      // Update the user context with the decoded information
+      setUser({
+        uid: decoded.uid,
+        email: decoded.claims.email,
+        role: decoded.claims.role, // If you store role in Firestore or Firebase
+      });
+
+      navigate("/"); // Redirect to homepage after successful login
+      } else {
+        // Handle error
+        alert("Login failed. Please try again.");
+      }
+
+
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+  
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const data = await adminLogin({
+        email: credentials.email,
+        password: credentials.password,
+      });
+
+      if(data.token)
+      {
+        await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
+        alert("Login successful!");
+
+      // Store the token in localStorage
+      localStorage.setItem("authToken", data.token);
+
+      // Decode the token to get user info
+      const decoded = jwtDecode(data.token);
+
+      // Update the user context with the decoded information
+      setUser({
+        uid: decoded.uid,
+        email: decoded.claims.email,
+        role: decoded.claims.role, // If you store role in Firestore or Firebase
+      });
+
+      navigate("/admin-dashboard"); // Redirect to homepage after successful login
+      }
+      
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+  
+  
   return (
     <div className="auth-container">
       <div className="auth-form">
@@ -132,7 +188,7 @@ function Authentication() {
         )}
 
         {authMode === "admin" && (
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleAdminLogin}>
             <input
               type="email"
               name="email"
@@ -161,11 +217,12 @@ function Authentication() {
               <span className="toggle-link" onClick={() => toggleAuthMode("register")}>
                 Register
               </span>{" "}
-              <div style={{ background: "none" }}>
+              <br></br>
+              <span style={{ background: "none" }}>
                 <span className="toggle-link" onClick={() => toggleAuthMode("admin")}>
                   <i>Login As Admin</i>
                 </span>
-              </div>
+              </span>
             </>
           )}
           {authMode === "register" && (

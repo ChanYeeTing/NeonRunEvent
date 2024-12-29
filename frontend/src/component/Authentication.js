@@ -2,20 +2,20 @@ import React, { useState } from "react";
 import "./Authentication.css";
 import { useNavigate } from "react-router-dom";
 import { register, login, adminLogin } from "../utils/api"; // Import API functions
-import { useUser } from "./UserContext";
 import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, updateProfile } from "firebase/auth";
 import { auth } from "../firebase/firebase-init";
 import { getAuth, sendEmailVerification, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc,setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebase-init";
+import LoadingOverlay from "./LoadingOverlay";
 
 function Authentication() {
   const navigate = useNavigate();
   const [authMode, setAuthMode] = useState("login"); // "login", "register", "admin"
   const [credentials, setCredentials] = useState({ userName: "", email: "", password: "" });
   const [error, setError] = useState("");
-  const {setRole} = useUser();
-  const user = getAuth().currentUser;
+  const [loading, setLoading] = useState(false);
+
   const toggleAuthMode = (mode) => {
     setAuthMode(mode);
     setError("");
@@ -30,9 +30,10 @@ function Authentication() {
     setError("");
     e.preventDefault();
     try {
+      setLoading(true);
       const userCredential = await createUserWithEmailAndPassword(auth, credentials.email, credentials.password);
       const user = userCredential.user;
-      setRole("user");
+      sessionStorage.setItem("role", "user");
       await setDoc(doc(db, "users", userCredential.user.uid), {
         userName: credentials.userName,
         email: credentials.email,
@@ -41,10 +42,11 @@ function Authentication() {
       });
       await sendEmailVerification(user);
       await updateProfile(user, { displayName: credentials.userName });
-
+      setLoading(false);
       alert("User registered successfully. Verify email to log in.");
       setAuthMode("login");
     } catch (err) {
+      setLoading(false);
       setError(err.message);
     }
   };
@@ -52,27 +54,30 @@ function Authentication() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
     try {
-     
       const data = await login({
         email: credentials.email,
         password: credentials.password,
       });
 
       if (data.token) {
-        await setPersistence(auth, browserLocalPersistence);
         await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
+        setLoading(false);
+        await setPersistence(auth, browserLocalPersistence);
         // Handle successful login
         alert("Login successful!");
-
+        sessionStorage.setItem("role", "user");
       navigate("/"); // Redirect to homepage after successful login
       } else {
+        setLoading(false);
         // Handle error
         alert("Login failed. Please try again.");
       }
 
 
     } catch (err) {
+      setLoading(false);
       setError(err.message);
     }
   };
@@ -91,7 +96,7 @@ function Authentication() {
         await setPersistence(auth, browserLocalPersistence);
         await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
         alert("Login successful!");
-        setRole("admin");
+        sessionStorage.setItem("role", "admin");
       navigate("/admin-dashboard"); // Redirect to homepage after successful login
       }
       
@@ -103,6 +108,7 @@ function Authentication() {
   
   return (
     <div className="auth-container">
+      <LoadingOverlay loading={loading} />
       <div className="auth-form">
         <h2>{authMode === "login" ? "Login" : authMode === "register" ? "Register" : "Admin Login"}</h2>
 

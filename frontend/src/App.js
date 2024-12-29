@@ -17,6 +17,8 @@ import ParticipantList from './component/ParticipantList';
 import Ranking from './component/Ranking';
 import KitCollection from './component/KitCollection';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import ProtectedRoute from './component/ProtectRoute';
+import LoadingOverlay from './component/LoadingOverlay';
 
 function App() {
   return (
@@ -32,11 +34,12 @@ function App() {
 
 function AppContent() {
   const location = useLocation();
+  const [loading, setLoading] = React.useState(true);
 
   return (
     <>
-      <Navbar />
-
+      <Navbar setLoading={setLoading} />
+      <LoadingOverlay loading={loading} />
       <Routes>
         <Route path="/" exact Component={Home} />
         <Route path="/register" exact Component={Register} />
@@ -48,10 +51,10 @@ function AppContent() {
         <Route path="/status" exact Component={Status}/>
         <Route path="/success" exact Component={Success}/>
         <Route path="/failed" exact Component={Failed}/>
-        <Route path="/admin-dashboard" exact Component={AdminDashboard} />
-        <Route path="/admin-participant-list" exact Component={ParticipantList} />
-        <Route path="/admin-ranking-list" exact Component={Ranking} />
-        <Route path="/admin-race-kit" exact Component={KitCollection} />
+        <Route path="/admin-dashboard" element= {<ProtectedRoute><AdminDashboard/></ProtectedRoute>} />
+        <Route path="/admin-participant-list" element= {<ProtectedRoute><ParticipantList/></ProtectedRoute>} />
+        <Route path="/admin-ranking-list" element= {<ProtectedRoute><Ranking/></ProtectedRoute>} />
+        <Route path="/admin-race-kit"  element= {<ProtectedRoute><KitCollection/></ProtectedRoute>} />
       </Routes>
 
       { location.pathname.includes("admin") && 

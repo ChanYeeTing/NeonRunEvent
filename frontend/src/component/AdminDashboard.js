@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './AdminDashboard.css';
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer  } from 'recharts';
+import { eventStatistics } from '../utils/api';
 
 function AdminDashboard () {
+    const [statistics, setStatistics] = useState({});
+
+    useEffect(()=> {
+       const fetchStatistics = async () => {
+      try {
+        const data = await eventStatistics();
+        setStatistics(data);
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching statistics:", error);
+      }
+    };
+
+    fetchStatistics();
+
+        },[]);
+
     const participantData = {
         totalParticipants: 5,
         categories: [
@@ -29,14 +47,14 @@ function AdminDashboard () {
             <div className="stats-container">
                 <div className="stat-box">
                     <h2>Total Participants</h2>
-                    <p>{participantData.totalParticipants}</p>
+                    <p>{statistics.totalParticipants}</p>
                 </div>
                 <div className='chart-container'>
                     <div className="chart-box">
                         <h2>Category Distribution</h2>
                         <PieChart width={400} height={300}>
                             <Pie
-                                data={participantData.categories}
+                                data={statistics.categories}
                                 dataKey="value"
                                 nameKey="name"
                                 cx="50%"
@@ -45,7 +63,7 @@ function AdminDashboard () {
                                 fill="hotpink"
                                 label
                             >
-                                {participantData.categories.map((entry, index) => (
+                                {statistics.categories?.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
@@ -57,7 +75,7 @@ function AdminDashboard () {
                         <h2>Package Distribution</h2>
                         <PieChart width={400} height={300}>
                             <Pie
-                                data={participantData.packages}
+                                data={statistics.packages}
                                 dataKey="value"
                                 nameKey="name"
                                 cx="50%"
@@ -66,7 +84,7 @@ function AdminDashboard () {
                                 fill="hotpink"
                                 label
                             >
-                                {participantData.packages.map((entry, index) => (
+                                {statistics.packages?.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
@@ -79,7 +97,7 @@ function AdminDashboard () {
                         <h2>T-Shirt Size Distribution</h2>
                         <ResponsiveContainer width="100%" height={300}>
                         <BarChart
-                            data={participantData.tshirtSizes}
+                            data={statistics.tshirtSizes}
                             margin={{
                                 top: 20, right: 30, left: 20, bottom: 5,
                             }}

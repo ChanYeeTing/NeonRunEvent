@@ -69,10 +69,30 @@ export const participantList = async (data) => {
 
     const result = await response.json();
     if (!response.ok) {
-      throw new Error(result.error || "Login failed.");
+      throw new Error(result.error || "Error fetching participants");
     }
     return result; 
   } catch (error) {
     throw new Error(error.message);
   }
+};
+
+export const eventStatistics = async (data) => {
+  try{
+    const response = await fetch("api/event-stats", 
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+      });
+      const result = await response.json()
+      if(!response.ok)
+      {
+        throw new Error(result.error || "Error fetching event statistics");
+      }
+      return result;
+  }
+  catch (error) {
+    throw new Error(error.message);
+  }
+
 };

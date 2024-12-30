@@ -86,6 +86,7 @@ function Authentication() {
     e.preventDefault();
     setError("");
     try {
+      setLoading(true);
       const data = await adminLogin({
         email: credentials.email,
         password: credentials.password,
@@ -93,14 +94,16 @@ function Authentication() {
 
       if(data.token)
       {
-        await setPersistence(auth, browserLocalPersistence);
         await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
+        setLoading(false);
+        await setPersistence(auth, browserLocalPersistence);
         alert("Login successful!");
         sessionStorage.setItem("role", "admin");
       navigate("/admin-dashboard"); // Redirect to homepage after successful login
       }
       
     } catch (err) {
+      setLoading(false);
       setError(err.message);
     }
   };

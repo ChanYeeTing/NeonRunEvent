@@ -105,5 +105,62 @@ router.get("/api/participantList", async (req, res) => {
   }
 });
 
+// Route to fetch event statistics
+router.get("/api/event-stats", async (req, res) => {
+  try {
+    const participantsRef = db.collection("users");
+    const snapshot = await participantsRef.get();
+
+    // Initialize counters
+    let totalParticipants = 0;
+    const categories = {};
+    const packages = {};
+    const tshirtSizes = {};
+
+    // Aggregate counts
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      if (data.status === "Approved") {
+        totalParticipants++;
+  
+        // Count by category
+        if (data.category) {
+          categories[data.category] = (categories[data.category] || 0) + 1;
+        }
+  
+        // Count by package
+        if (data.package) {
+          packages[data.package] = (packages[data.package] || 0) + 1;
+        }
+  
+        // Count by T-shirt size
+        if (data.tshirtSize!=="N/A") {
+          tshirtSizes[data.tshirtSize] = (tshirtSizes[data.tshirtSize] || 0) + 1;
+        }
+      }
+    });
+
+    // Transform objects to arrays for easier consumption on the frontend
+    const categoryArray = Object.entries(categories).map(([name, value]) => ({ name, value }));
+    const packageArray = Object.entries(packages).map(([name, value]) => ({ name, value }));
+    const tshirtSizeArray = Object.entries(tshirtSizes).map(([size, count]) => ({ size, count }));
+
+    // Response object
+    const statistics = {
+      totalParticipants,
+      categories: categoryArray,
+      packages: packageArray,
+      tshirtSizes: tshirtSizeArray,
+    };
+
+    res.status(200).json(statistics);
+  } catch (error) {
+    console.error("Error fetching event statistics:", error);
+    res.status(500).json({ error: "Failed to fetch statistics" });
+  }
+});
+
+
 
 module.exports = router;

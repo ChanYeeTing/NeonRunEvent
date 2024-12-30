@@ -39,7 +39,7 @@ function Navbar({ setLoading })
             console.error("Error during logout:", error.message);
           } 
       };
-
+      useEffect(() => {
       if(sessionStorage.getItem("role"))
       {
         if(user[0]?.displayName)
@@ -49,6 +49,7 @@ function Navbar({ setLoading })
       else{
         setLoading(false)
       }
+    }, [user, setLoading]);
       
     return(
         <header className="header">

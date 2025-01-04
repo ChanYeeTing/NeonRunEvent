@@ -34,12 +34,21 @@ function Authentication() {
       const userCredential = await createUserWithEmailAndPassword(auth, credentials.email, credentials.password);
       const user = userCredential.user;
       sessionStorage.setItem("role", "user");
-      await setDoc(doc(db, "users", userCredential.user.uid), {
+      const registerData = {
+        user,
         userName: credentials.userName,
         email: credentials.email,
-        password: credentials.password,
         role: "user"
-      });
+      }
+      await register(registerData);
+
+      // await setDoc(doc(db, "users", userCredential.user.uid), {
+      //   userName: credentials.userName,
+      //   email: credentials.email,
+      //   password: credentials.password,
+      //   role: "user"
+      // });
+
       await sendEmailVerification(user);
       await updateProfile(user, { displayName: credentials.userName });
       setLoading(false);

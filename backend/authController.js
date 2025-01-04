@@ -15,19 +15,17 @@ app.use(cors(corsOptions));
 
 // Register User
 router.post("/api/register", async (req, res) => {
-  const { user } = req.body;
+  const { user, userName, email, role } = req.body;
   try {
     // Send email verification
-    await auth.updateUser(user, { emailVerified: false });
+    await auth.updateUser(user.uid, { emailVerified: false });
 
     // Save user to Firestore
-    await db.collection("users").doc(user).set({
+    await db.collection("users").doc(user.uid).set({
       userName,
       email,
-      role: "user",
+      role,
     });
-
-
 
     res.status(200).json({ message: "User registered successfully. Verify email to log in." });
 

@@ -4,6 +4,7 @@ import './Register.css';
 import Runner from '../image/runner.png';
 import { getAuth } from "firebase/auth";
 import {db, collection, addDoc} from '../firebase/firebase-init.js'; 
+import { registerParticipant } from '../utils/api.js';
 
 function Register() {
   const navigate = useNavigate(); 
@@ -12,7 +13,7 @@ function Register() {
     fullName: '',
     icNumber: '',
     contactNumber: '',
-    email: '',
+    eventEmail: '',
     category: '',
     package: '',
     year: '',
@@ -35,18 +36,33 @@ function Register() {
       console.log("User is not authenticated");
       return;
     }
-  
-    try {
-      await addDoc(collection(db, 'users'), {
+
+    try{
+      const registerData = {
         ...formData,
         userId: user.uid, // Include user UID to associate data with the user
         createdAt: new Date(),
         status: 'Pending',
-      });
-      console.log("User data saved successfully");
-    } catch (error) {
-      console.error("Error saving data to Firestore:", error);
+      }
+       const response = await registerParticipant(registerData);
+       console.log(response);
     }
+    catch(error)
+    {
+      console.log(error.message);
+    }
+  
+    // try {
+    //   await addDoc(collection(db, 'users'), {
+    //     ...formData,
+    //     userId: user.uid, // Include user UID to associate data with the user
+    //     createdAt: new Date(),
+    //     status: 'Pending',
+    //   });
+    //   console.log("User data saved successfully");
+    // } catch (error) {
+    //   console.error("Error saving data to Firestore:", error);
+    // }
   };
   
 
@@ -184,12 +200,12 @@ function Register() {
           Student Email
           <input
             type="email"
-            name="email"
+            name="eventEmail"
             placeholder="If you are not a USM student, enter your personal email."
-            value={formData.email}
+            value={formData.eventEmail}
             onChange={handleChange}
           />
-          {errors.email && <div className="error">{errors.email}</div>}
+          {errors.eventEmail && <div className="error">{errors.eventEmail}</div>}
         </label>
 
         {/* Package */}

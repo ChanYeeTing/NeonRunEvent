@@ -161,6 +161,26 @@ router.get("/api/event-stats", async (req, res) => {
   }
 });
 
+router.post("/api/register-participant", async (req, res) => {
+  const { userId, createdAt, status, ...data } = req.body;
+  try {
+
+    await db.collection("users").doc(userId).set(
+      {
+        createdAt,
+        status,
+        ...data,
+      },
+      { merge: true }
+    );
+
+    res.status(200).json({ message: "User data save successfully. Pending review." });
+
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 
 
 module.exports = router;

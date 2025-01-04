@@ -50,18 +50,6 @@ function Register() {
     {
       console.log(error.message);
     }
-  
-    // try {
-    //   await addDoc(collection(db, 'users'), {
-    //     ...formData,
-    //     userId: user.uid, // Include user UID to associate data with the user
-    //     createdAt: new Date(),
-    //     status: 'Pending',
-    //   });
-    //   console.log("User data saved successfully");
-    // } catch (error) {
-    //   console.error("Error saving data to Firestore:", error);
-    // }
   };
   
 
@@ -76,6 +64,22 @@ function Register() {
       }
     });
 
+    // Vlidation for IC number format
+    if (!/^\d{6}-\d{2}-\d{4}$/.test(formData.icNumber)) {
+      newErrors.icNumber = 'Invalid IC number format.';
+    }
+
+    // Validation for contact number format
+    if (!/^01\d-\d{7,8}$/.test(formData.contactNumber)) {
+      newErrors.contactNumber = 'Invalid contact number format.';
+    }
+
+    // Validation for matric number (6 digits only)
+    if (!/^(\d{6}|N\/A)$/i.test(formData.school)) {
+      newErrors.school = 'Matric number must be exactly 6 digits or "N/A".';
+    }
+
+    //T-SHIRT size cannot be null for package B
     if (formData.package === 'B' && !formData.tshirtSize) {
       newErrors.tshirtSize = 'Please select your t-shirt size';
     }

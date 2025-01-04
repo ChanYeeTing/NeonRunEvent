@@ -1,5 +1,5 @@
 import React from "react";
-import { FaHome,FaList,FaClipboardList, FaListOl } from 'react-icons/fa';
+import { FaHome,FaList,FaClipboardList, FaListOl, FaUpload } from 'react-icons/fa';
 import './SideBar.css'
 
 function SideBar () {
@@ -23,6 +23,11 @@ function SideBar () {
         title: "Ranking List",
         icon: <FaListOl />,
         link: "/admin-ranking-list",
+    },
+    {
+        title: "Upload Document",
+        icon: <FaUpload/>,
+        link: "/admin-upload-document",
     }
 
     ]

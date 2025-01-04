@@ -114,3 +114,74 @@ export const registerParticipant = async (data) => {
     throw new Error(error.message);
   }
 };
+
+export const uploadMemory = async (data) => {
+  try {
+    const response = await fetch("/api/upload-memory", {
+      method: "POST",
+      body: data,
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Upload failed.");
+    }
+    return result; // Return result if successful
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getMemories = async () => {
+  try {
+    const response = await fetch("/api/get-memories", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    const result = await response.json()
+    if(!response.ok)
+    {
+      throw new Error(result.error || "Error fetching image");
+    }
+    return result;
+  }
+  catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const uploadWinner = async (data) => {
+  try {
+    const response = await fetch("/api/upload-winners", {
+      method: "POST",
+      body: data,
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Upload failed.");
+    }
+    return result; // Return result if successful
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getWinners = async () => {
+  try {
+    const response = await fetch("/api/get-winners", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    const result = await response.json()
+    if(!response.ok)
+    {
+      throw new Error(result.error || "Error fetching image");
+    }
+    return result;
+  }
+  catch (error) {
+    throw new Error(error.message);
+  }
+};
+

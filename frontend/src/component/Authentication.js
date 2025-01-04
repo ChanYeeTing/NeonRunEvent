@@ -4,9 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { register, login, adminLogin } from "../utils/api"; // Import API functions
 import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, updateProfile } from "firebase/auth";
 import { auth } from "../firebase/firebase-init";
-import { getAuth, sendEmailVerification, createUserWithEmailAndPassword } from "firebase/auth";
-import { doc,setDoc } from "firebase/firestore";
-import { db } from "../firebase/firebase-init";
+import { sendEmailVerification, createUserWithEmailAndPassword } from "firebase/auth";
 import LoadingOverlay from "./LoadingOverlay";
 
 function Authentication() {

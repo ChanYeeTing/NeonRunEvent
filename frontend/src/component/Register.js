@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import Runner from '../image/runner.png';
 import { getAuth } from "firebase/auth";
-import {db, collection, addDoc} from '../firebase/firebase-init.js'; 
 import { registerParticipant } from '../utils/api.js';
 
 function Register() {

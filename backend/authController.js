@@ -1,10 +1,16 @@
 // authController.js
 const express = require("express");
-const { db, auth } = require("./firebase-admin"); // Import from the centralized firebase.js
+const { db, auth, bucket } = require("./firebase-admin"); // Import from the centralized firebase.js
 const cors = require("cors");
 
 const router = express.Router();
 const app = express();
+
+const multer = require('multer');
+
+// Set up memory storage
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const corsOptions = {
   origin: 'http://localhost:3000', // React dev server
@@ -179,6 +185,128 @@ router.post("/api/register-participant", async (req, res) => {
   }
 });
 
+router.post("/api/upload-memory", upload.array('images', 10), async (req, res) => {
+  try {
+    const files = req.files;
 
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    const uploadedImages = [];
+
+    for (const file of files) {
+      const fileName = `memories/${Date.now()}_${file.originalname}`;
+      const fileUpload = bucket.file(fileName);
+
+      const stream = fileUpload.createWriteStream({
+        metadata: {
+          contentType: file.mimetype,
+        },
+      });
+
+      stream.on('error', (error) => {
+        console.error('Upload error:', error);
+        throw error;
+      });
+
+      await new Promise((resolve, reject) => {
+        stream.on('finish', resolve);
+        stream.end(file.buffer);
+      });
+
+      await fileUpload.makePublic();
+
+      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+      uploadedImages.push(publicUrl);
+    }
+
+    res.status(200).json({ message: 'Images uploaded successfully', urls: uploadedImages });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/api/get-memories', async (req, res) => {
+  try {
+    const [files] = await bucket.getFiles({ prefix: 'memories/' });  // List all files under 'memories' folder
+
+    // Generate download URLs for each file in the 'memories' folder
+    const imageUrls = await Promise.all(
+      files.map(async (file) => {
+        const url = await file.getSignedUrl({ action: 'read', expires: '03-09-2491' });
+        return url[0]; // Get the URL from the array returned by getSignedUrl
+      })
+    );
+
+    res.status(200).json({ message: 'Images fetched successfully', urls: imageUrls });
+  } catch (error) {
+    console.error('Error fetching images:', error);
+    res.status(500).json({ error: 'Failed to fetch images', details: error.message });
+  }
+});
+
+router.post("/api/upload-winners", upload.array('winners', 10), async (req, res) => {
+  try {
+    const files = req.files;
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: 'No files uploaded' });
+    }
+
+    const uploadedImages = [];
+
+    for (const file of files) {
+      const fileName = `winners/${Date.now()}_${file.originalname}`;
+      const fileUpload = bucket.file(fileName);
+
+      const stream = fileUpload.createWriteStream({
+        metadata: {
+          contentType: file.mimetype,
+        },
+      });
+
+      stream.on('error', (error) => {
+        console.error('Upload error:', error);
+        throw error;
+      });
+
+      await new Promise((resolve, reject) => {
+        stream.on('finish', resolve);
+        stream.end(file.buffer);
+      });
+
+      await fileUpload.makePublic();
+
+      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+      uploadedImages.push(publicUrl);
+    }
+
+    res.status(200).json({ message: 'Images uploaded successfully', urls: uploadedImages });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/api/get-winners', async (req, res) => {
+  try {
+    const [files] = await bucket.getFiles({ prefix: 'winners/' });  // List all files under 'memories' folder
+
+    // Generate download URLs for each file in the 'memories' folder
+    const imageUrls = await Promise.all(
+      files.map(async (file) => {
+        const url = await file.getSignedUrl({ action: 'read', expires: '03-09-2491' });
+        return url[0]; // Get the URL from the array returned by getSignedUrl
+      })
+    );
+
+    res.status(200).json({ message: 'Images fetched successfully', urls: imageUrls });
+  } catch (error) {
+    console.error('Error fetching images:', error);
+    res.status(500).json({ error: 'Failed to fetch images', details: error.message });
+  }
+});
 
 module.exports = router;

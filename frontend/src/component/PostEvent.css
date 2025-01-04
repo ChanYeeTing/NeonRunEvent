@@ -28,26 +28,24 @@
 .post-event-container .memories-container
 {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: auto;
-    max-width: 90%; 
+  grid-template-columns: repeat(2, 1fr); /* Creates a 2-column grid */
+  gap: 20px; /* Adds spacing between images */
+  justify-items: center; /* Centers images horizontally */
+  margin-top: 20px;
+}
+.image-item {
+    display: flex;
     justify-content: center;
-    align-items: center;
-    /* gap: 5%; */
-    padding: 0 5%;
-    overflow: hidden; 
-    height: max-content;
-}
-.memories-container img {
-    aspect-ratio: 4 / 3; 
-    margin-left: 5%;
-    margin-top: 5%;
-    margin-bottom: 5%;
-    width: 90%;
-    height: auto;
-    object-fit: cover;
-    border-radius: 8px;
-}
+  }
+  
+  .uploadedImage {
+    width: 100%;
+    min-width: 500px; 
+    height: 400px; 
+    object-fit: cover; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  }
 
 
 .winners {

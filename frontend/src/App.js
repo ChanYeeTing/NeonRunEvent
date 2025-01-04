@@ -19,6 +19,7 @@ import KitCollection from './component/KitCollection';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import ProtectedRoute from './component/ProtectRoute';
 import LoadingOverlay from './component/LoadingOverlay';
+import UploadDocument from './component/UploadDocument';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function AppContent() {
         <Route path="/admin-participant-list" element= {<ProtectedRoute><ParticipantList/></ProtectedRoute>} />
         <Route path="/admin-ranking-list" element= {<ProtectedRoute><Ranking/></ProtectedRoute>} />
         <Route path="/admin-race-kit"  element= {<ProtectedRoute><KitCollection/></ProtectedRoute>} />
+        <Route path="/admin-upload-document"  element= {<ProtectedRoute><UploadDocument/></ProtectedRoute>} />
       </Routes>
 
       { location.pathname.includes("admin") && 

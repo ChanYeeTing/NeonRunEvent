@@ -1,0 +1,9 @@
+.upload-container {
+    padding-left: 295px;
+    padding-top: 40px;
+    width: calc(100% - 320px);
+    
+}
+.winner-upload{
+    margin-top: 50px;
+}

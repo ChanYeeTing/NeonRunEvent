@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import Runner from '../image/runner.png';
+import { getAuth } from "firebase/auth";
+import {db, collection, addDoc} from '../firebase/firebase-init.js'; 
 
 function Register() {
   const navigate = useNavigate(); 
@@ -25,7 +27,30 @@ function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleNext = (e) => {
+  const saveToFirestore = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+  
+    if (!user) {
+      console.log("User is not authenticated");
+      return;
+    }
+  
+    try {
+      await addDoc(collection(db, 'users'), {
+        ...formData,
+        userId: user.uid, // Include user UID to associate data with the user
+        createdAt: new Date(),
+        status: 'Pending',
+      });
+      console.log("User data saved successfully");
+    } catch (error) {
+      console.error("Error saving data to Firestore:", error);
+    }
+  };
+  
+
+  const handleNext = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -44,6 +69,7 @@ function Register() {
       setErrors(newErrors);
     } else {
       setErrors({});
+      await saveToFirestore(); // Save data to Firestore
      navigate("/payment");  // Navigate to payment if no errors
     }
   };

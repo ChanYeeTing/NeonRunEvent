@@ -309,4 +309,54 @@ router.get('/api/get-winners', async (req, res) => {
   }
 });
 
+router.post("/api/upload-payment-proof", upload.single('paymentProof'), async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ error: "No file uploaded." });
+    }
+
+    const fileName = `payment_proofs/${Date.now()}_${file.originalname}`;
+    const fileUpload = bucket.file(fileName);
+
+    const stream = fileUpload.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
+
+    stream.on('error', (error) => {
+      console.error('Upload error:', error);
+      throw error;
+    });
+
+    await new Promise((resolve, reject) => {
+      stream.on('finish', resolve);
+      stream.end(file.buffer);
+    });
+
+    await fileUpload.makePublic();
+
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+
+    // Save the URL and userId to Firestore
+    await db.collection('users').doc(userId).set(
+      {
+      userId,
+      paymentProofUrl: publicUrl,
+      },
+      { merge: true }
+    );
+
+    res.status(200).json({ message: "Payment proof uploaded successfully.", url: publicUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to upload payment proof." });
+  }
+});
+
+
+
 module.exports = router;

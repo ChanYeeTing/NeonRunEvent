@@ -185,3 +185,19 @@ export const getWinners = async () => {
   }
 };
 
+export const uploadPaymentProof = async (data) => {
+  try {
+    const response = await fetch("/api/upload-payment-proof", {
+      method: "POST",
+      body: data,
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Payment proof upload failed.");
+    }
+    return result;
+  } catch (error) {
+    throw new Error(error.message); 
+  }
+};

@@ -390,6 +390,7 @@ router.get("/api/kit-list", async (req, res) => {
         matricNo: data.school || "N/A",
         package: data.package || "N/A",
         tshirtSize: data.tshirtSize || "N/A",
+        raceKit: data.raceKit || "N/A",
       };
     });
 
@@ -397,6 +398,39 @@ router.get("/api/kit-list", async (req, res) => {
   } catch (error) {
     console.error("Error fetching approved participants:", error);
     res.status(500).json({ error: "Failed to fetch approved participants" });
+  }
+});
+
+// Route to update kit list
+router.post("/api/update-kit-list", async (req, res) => {
+  const { kitData } = req.body;  // Receiving 'winnersData' array
+
+  try {
+    // Reference to the 'users' collection in Firestore
+    const kitListRef = db.collection("users");
+
+    await Promise.all(
+      kitData.map(async (kit) => {
+        // Query the 'users' collection to find the document where icNumber matches
+        const userSnapshot = await kitListRef.where("icNumber", "==", kit.icNumber).get();
+
+        if (!userSnapshot.empty) {
+          // If a match is found, use 'set' with 'merge: true' to add/update the rank field
+          const userDocRef = userSnapshot.docs[0].ref;
+          await userDocRef.set({
+            raceKit: kit.collected ? "Collected" : "Not Collected",
+          }, { merge: true });
+        } else {
+          // If no matching user is found, handle the case (optional)
+          console.log(`No user found with icNumber: ${kit.icNumber}`);
+        }
+      })
+    );
+
+    res.status(200).json({ message: 'Kit Collection list updated successfully.' });
+  } catch (error) {
+    console.error("Error updating kit collection list:", error);
+    res.status(500).json({ error: 'Failed to update kit collection list.' });
   }
 });
 

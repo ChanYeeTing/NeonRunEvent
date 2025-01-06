@@ -292,3 +292,23 @@ export const kitList = async () => {
     throw new Error(error.message);
   }
 };
+
+export const updateKitList = async (updateData) => {
+  try {
+    const response = await fetch("/api/update-kit-list", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ kitData: updateData }),  
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Update failed.");
+    }
+    return result; // Return result if successful
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};

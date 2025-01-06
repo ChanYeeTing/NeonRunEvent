@@ -96,11 +96,28 @@ router.post("/api/admin-login", async (req, res) => {
   }
 });
 
+// router.get("/api/participantList", async (req, res) => {
+//   try {
+
+//     const userSnapshot = await db.collection("users").where("status", "!=", null).get();
+//     const users = userSnapshot.docs.map((doc) => doc.data());
+
+//     res.status(200).json({ users });
+//   } catch (error) {
+//     console.error("Error fetching participants:", error);
+//     res.status(500).json({ error: "Failed to fetch participants" });
+//   }
+// });
+
 router.get("/api/participantList", async (req, res) => {
   try {
-
     const userSnapshot = await db.collection("users").where("status", "!=", null).get();
-    const users = userSnapshot.docs.map((doc) => doc.data());
+    
+    // Map through each document and add the doc.id (uid) to the user data
+    const users = userSnapshot.docs.map((doc) => ({
+      uid: doc.id,  // Add the document ID as uid
+      ...doc.data()  // Spread the rest of the user data
+    }));
 
     res.status(200).json({ users });
   } catch (error) {
@@ -108,6 +125,7 @@ router.get("/api/participantList", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch participants" });
   }
 });
+
 
 // Route to fetch event statistics
 router.get("/api/event-stats", async (req, res) => {
@@ -357,6 +375,27 @@ router.post("/api/upload-payment-proof", upload.single('paymentProof'), async (r
   }
 });
 
+// Update User Status
+router.post("/api/update-status", async (req, res) => {
+  const { userId, status } = req.body;
+
+  try {
+    if (!userId || !status) {
+      return res.status(400).json({ error: "userId and status are required." });
+    }
+
+    // Update the status field in the database
+    await db.collection("users").doc(userId).set(
+      { status },
+      { merge: true }
+    );
+
+    res.status(200).json({ message: "User status updated successfully." });
+  } catch (err) {
+    console.error("Error updating status:", err);
+    res.status(500).json({ error: "Failed to update status." });
+  }
+});
 
 
 module.exports = router;

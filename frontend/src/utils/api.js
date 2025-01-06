@@ -201,3 +201,22 @@ export const uploadPaymentProof = async (data) => {
     throw new Error(error.message); 
   }
 };
+
+// Function to update user status
+export const updateStatus = async (data) => {
+  try {
+    const response = await fetch("/api/update-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to update status.");
+    }
+    return result; // Return result if successful
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};

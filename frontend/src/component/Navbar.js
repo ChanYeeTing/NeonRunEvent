@@ -30,7 +30,7 @@ function Navbar({ setLoading })
         try {
            
             await signOut(auth); // Log out the user
-            sessionStorage.removeItem("role");
+            localStorage.removeItem("role");
             setEmailStatus(false); // Clear email status
         
             console.log("User logged out successfully.");
@@ -40,7 +40,7 @@ function Navbar({ setLoading })
           } 
       };
       useEffect(() => {
-      if(sessionStorage.getItem("role"))
+      if(localStorage.getItem("role"))
       {
         if(user[0]?.displayName)
             setLoading(false);
@@ -70,7 +70,8 @@ function Navbar({ setLoading })
                 </div>
                 }
             </nav>
-            {sessionStorage.getItem("role") ? (
+            {console.log(localStorage.getItem("role"), user)}
+            {user[0] ? (
                 <div className='userContainer'>
                 <p className='userName'>{user[0]?.displayName}</p>
                 <button className="user" onClick={handleLogout}>Log Out</button>

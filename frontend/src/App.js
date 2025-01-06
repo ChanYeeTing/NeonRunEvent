@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import Navbar from './component/Navbar';
 import Home from './component/Home';
@@ -20,8 +20,16 @@ import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import ProtectedRoute from './component/ProtectRoute';
 import LoadingOverlay from './component/LoadingOverlay';
 import UploadDocument from './component/UploadDocument';
+import { auth } from './firebase/firebase-init';
+import { signOut } from 'firebase/auth';
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useNavigate } from 'react-router-dom';
+
+const SESSION_TIMEOUT = 30 * 60 * 1000; 
+let timeoutId = null;
 
 function App() {
+ 
   return (
     <BrowserRouter>
       <div className="App">
@@ -36,6 +44,64 @@ function App() {
 function AppContent() {
   const location = useLocation();
   const [loading, setLoading] = React.useState(true);
+  const navigate = useNavigate();
+  const user = useAuthState(auth);
+
+  
+  const clearSession = () => {    
+    localStorage.clear(); // Clear all localStorage
+    signOut(auth);
+    alert("Session expired. Please log in again.");
+    navigate("/login"); // Redirect to the login page
+  };
+
+  const setSessionTimeout = () => {
+
+    // Clear any previous timeout
+    clearTimeout(timeoutId);
+    // Set a new timeout
+    timeoutId = setTimeout(() => {
+      clearSession();
+    }, SESSION_TIMEOUT);
+  };
+
+  // Reset session timeout on user activity
+  const handleUserActivity = () => {
+    localStorage.setItem("lastActivity", Date.now()); // Track last activity time
+    setSessionTimeout(); // Reset session timeout on any user activity (click, scroll, etc.)
+  };
+
+  useEffect(() => {
+
+    if (!user[0]) {
+      return; // Don't run session timeout logic if the user is not authenticated
+    }
+
+    // Set up event listeners for user activity
+    window.addEventListener("click", handleUserActivity);
+    window.addEventListener("keypress", handleUserActivity);
+    window.addEventListener("mousemove", handleUserActivity);
+    window.addEventListener("scroll", handleUserActivity);
+
+    // Check session timeout on component mount
+    const lastActivity = localStorage.getItem("lastActivity");
+    const currentTime = Date.now();
+
+    if ((lastActivity && currentTime - lastActivity > SESSION_TIMEOUT)) {
+      clearSession(); // If the session is expired, clear it
+    } else {
+      setSessionTimeout(); // If the session is still valid, set a new timeout
+    }
+
+    // Clear timeout and remove event listeners when component unmounts
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("click", handleUserActivity);
+      window.removeEventListener("keypress", handleUserActivity);
+      window.removeEventListener("mousemove", handleUserActivity);
+      window.removeEventListener("scroll", handleUserActivity);
+    };
+  }, [user]);
 
   return (
     <>

@@ -1,71 +1,96 @@
-import React, { useState } from "react";
-import './ParticipantList.css';
-import { participantList } from "../utils/api";
+import React, { useState, useEffect } from "react";
+import "./ParticipantList.css";
+// import { db } from "../firebase/firebase-init.js"; // Uncomment when using Firestore
+import { participantList, updateStatus } from "../utils/api"; // Import custom API functions
+import GlobalState from "./global"; // Import GlobalState
 
 function ParticipantList() {
-   
-   participantList().then((data) => {
-    console.log('Participants:', data.users);
-  })
-  .catch((error) => {
-    console.error('Error:', error.message);
-  });
-
-  
-
-    const initialParticipants = [
-        { id: 1, name: "John", icNumber: "010912-04-0143", contactNo: "011-3489028", category: "Student USM", matricNo: "157329", package: "B", tshirtSize: "M", paymentFile: "/images/payment1.jpg", status: "Approved" },
-    { id: 2, name: "Jane", icNumber: "050214-08-1321", contactNo: "012-6453243", category: "Student USM", matricNo: "158342", package: "A", tshirtSize: "N/A", paymentFile: "/images/payment1.jpg", status: "Approved" },
-    { id: 3, name: "Mike", icNumber: "011021-06-0143", contactNo: "018-3234324", category: "Public", matricNo: "N/A", package: "B", tshirtSize: "S", paymentFile: "/images/payment1.jpg", status: "Approved" },
-    { id: 4, name: "Emily", icNumber: "020502-04-0441", contactNo: "011-6754523", category: "Public", matricNo: "N/A", package: "B", tshirtSize: "M", paymentFile: "/images/payment1.jpg", status: "Approved" },
-    { id: 5, name: "Chris", icNumber: "031109-08-1274", contactNo: "011-78973242", category: "Student USM", matricNo: "157453", package: "B", tshirtSize: "XL", paymentFile: "/images/payment1.jpg", status: "Approved" },
-    { id: 6, name: "Sarah", icNumber: "990816-10-1432", contactNo: "016-9823742", category: "Public", matricNo: "N/A", package: "A", tshirtSize: "N/A", paymentFile: "/images/payment1.jpg", status: "Pending" },
-    { id: 7, name: "Ali", icNumber: "950324-07-1321", contactNo: "013-4567890", category: "Student USM", matricNo: "157894", package: "A", tshirtSize: "N/A", paymentFile: "/images/payment1.jpg", status: "Pending" },
-    { id: 8, name: "Siti", icNumber: "000412-05-0123", contactNo: "017-8923748", category: "Student USM", matricNo: "158674", package: "B", tshirtSize: "M", paymentFile: "/images/payment1.jpg", status: "Pending" },
-    { id: 9, name: "Tom", icNumber: "021223-09-8765", contactNo: "019-7283945", category: "Public", matricNo: "N/A", package: "B", tshirtSize: "L", paymentFile: "/images/payment1.jpg", status: "Pending" },
-    { id: 10, name: "Jessica", icNumber: "030101-02-5432", contactNo: "012-7894321", category: "Public", matricNo: "N/A", package: "A", tshirtSize: "N/A", paymentFile: "/images/payment1.jpg", status: "Pending" },
-    ]
-
-    const [participants, setParticipants] = useState(initialParticipants);
+    const [participants, setParticipants] = useState([]);
     const [currentTab, setCurrentTab] = useState("Pending");
-    const [packageFilter, setPackageFilter] = useState('');
-    const [categoryFilter, setCategoryFilter] = useState('');
+    const [packageFilter, setPackageFilter] = useState("");
+    const [categoryFilter, setCategoryFilter] = useState("");
     const [modalImage, setModalImage] = useState(null);
 
+    useEffect(() => {
+        const fetchParticipants = async () => {
+            try {
+                const data = await participantList(); // Fetch data from custom API
+                const participantsWithUserId = data.users.map((participant) => ({
+                    ...participant, // Spread other participant data
+                    userId: participant.uid, // Assign uid as userId for each participant
+                }));
+                setParticipants(participantsWithUserId); // Set the participants with userId
+            } catch (error) {
+                console.error("Error fetching participants:", error);
+            }
+        };
+    
+        fetchParticipants();
+    }, []);
+    
     // Filter participants based on category and package
-    const filteredParticipants = participants.filter(participant => {
+    const filteredParticipants = participants.filter((participant) => {
         const matchesPackage = packageFilter ? participant.package === packageFilter : true;
         const matchesCategory = categoryFilter ? participant.category === categoryFilter : true;
         return matchesPackage && matchesCategory;
     });
 
-    // Accept a participant
-    const handleAccept = (id) => {
-        setParticipants(prevParticipants =>
-            prevParticipants.map(participant =>
-                participant.id === id ? { ...participant, status: "Approved" } : participant
-            )
-        );
+    const handleAccept = async (userId) => {
+        try {
+            // Update local state
+            setParticipants((prevParticipants) =>
+                prevParticipants.map((participant) =>
+                    participant.userId === userId
+                        ? { ...participant, status: "Approved" }
+                        : participant
+                )
+            );
+
+            // Call API to update status in Firestore
+            const response = await updateStatus({ userId, status: "Approved" });
+            console.log("Status updated:", response.message);
+
+            // Update GlobalState
+            GlobalState.setLatestStatus("Approved");
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
     };
 
-    // Reject a participant
-    const handleReject = (id) => {
-        setParticipants(prevParticipants =>
-            prevParticipants.map(participant =>
-                participant.id === id ? { ...participant, status: "Rejected" } : participant
-            )
-        );
+    const handleReject = async (userId) => {
+        try {
+            // Update local state
+            setParticipants((prevParticipants) =>
+                prevParticipants.map((participant) =>
+                    participant.userId === userId
+                        ? { ...participant, status: "Failed" }
+                        : participant
+                )
+            );
+
+            // Call API to update status in Firestore
+            const response = await updateStatus({ userId, status: "Failed" });
+            console.log("Status updated:", response.message);
+
+            // Update GlobalState
+            GlobalState.setLatestStatus("Failed");
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
     };
 
-    // Separate participants by status
-    const pendingParticipants = filteredParticipants.filter(p => p.status === "Pending");
-    const ApprovedParticipants = filteredParticipants.filter(p => p.status === "Approved");
+    const pendingParticipants = filteredParticipants.filter(
+        (participant) => participant.status === "Pending"
+    );
+
+    const approvedParticipants = filteredParticipants.filter(
+        (participant) => participant.status === "Approved"
+    );
 
     const openModal = (image) => {
         setModalImage(image);
     };
 
-    // Handle closing the modal
     const closeModal = () => {
         setModalImage(null);
     };
@@ -73,7 +98,7 @@ function ParticipantList() {
     return (
         <div className="list-container">
             <h1>Participant List</h1>
-            
+
             <div className="tabs">
                 <button
                     className={`tab-button ${currentTab === "Pending" ? "active" : ""}`}
@@ -110,11 +135,19 @@ function ParticipantList() {
                     className="filter-selection"
                 >
                     <option value="">All</option>
-                    <option value="Student USM">Student USM</option>
-                    <option value="Public">Public</option>
+                    <option value="student">Student USM</option>
+                    <option value="public">Public</option>
                 </select>
 
-                <button className="clear-filter" onClick={() => { setCategoryFilter(""); setPackageFilter(""); }}>Clear Filter</button>
+                <button
+                    className="clear-filter"
+                    onClick={() => {
+                        setCategoryFilter("");
+                        setPackageFilter("");
+                    }}
+                >
+                    Clear Filter
+                </button>
             </div>
 
             {currentTab === "Pending" && (
@@ -134,24 +167,34 @@ function ParticipantList() {
                             </tr>
                         </thead>
                         <tbody>
-                            {pendingParticipants.map(participant => (
-                                <tr key={participant.id}>
-                                    <td>{participant.name}</td>
+                            {pendingParticipants.map((participant) => (
+                                <tr key={participant.uid}> 
+                                    <td>{participant.fullName}</td>
                                     <td>{participant.icNumber}</td>
-                                    <td>{participant.contactNo}</td>
+                                    <td>{participant.contactNumber}</td>
                                     <td>{participant.category}</td>
-                                    <td>{participant.matricNo}</td>
+                                    <td>{participant.school}</td>
                                     <td>{participant.package}</td>
-                                    <td>{participant.tshirtSize}</td>
+                                    <td>{participant.tshirtSize || "N/A"}</td>
                                     <td>
-                                    <button onClick={() => openModal(participant.paymentFile)}>
+                                        <button onClick={() => openModal(participant.paymentProofUrl)}>
                                             View
-                                    </button>
+                                        </button>
                                     </td>
                                     <td>
                                         <div className="action-container">
-                                        <button className="accept-button" onClick={() => handleAccept(participant.id)}>Accept</button>
-                                        <button className="reject-button" onClick={() => handleReject(participant.id)}>Reject</button>
+                                            <button
+                                                className="accept-button"
+                                                onClick={() => handleAccept(participant.uid)}
+                                            >
+                                                Accept
+                                            </button>
+                                            <button
+                                                className="reject-button"
+                                                onClick={() => handleReject(participant.uid)}
+                                            >
+                                                Reject
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -177,18 +220,20 @@ function ParticipantList() {
                             </tr>
                         </thead>
                         <tbody>
-                            {ApprovedParticipants.map(participant => (
-                                <tr key={participant.id}>
-                                    <td>{participant.name}</td>
+                            {approvedParticipants.map((participant) => (
+                                <tr key={participant.uid}>
+                                    <td>{participant.fullName}</td>
                                     <td>{participant.icNumber}</td>
-                                    <td>{participant.contactNo}</td>
+                                    <td>{participant.contactNumber}</td>
                                     <td>{participant.category}</td>
-                                    <td>{participant.matricNo}</td>
+                                    <td>{participant.school}</td>
                                     <td>{participant.package}</td>
-                                    <td>{participant.tshirtSize}</td>
-                                    <td><button onClick={() => openModal(participant.paymentFile)}>
+                                    <td>{participant.tshirtSize || "N/A"}</td>
+                                    <td>
+                                        <button onClick={() => openModal(participant.paymentProofUrl)}>
                                             View
-                                    </button></td>
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

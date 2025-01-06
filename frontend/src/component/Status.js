@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { fetchUserStatus } from '../utils/api.js';
 import './Status.css';
 
-function Status() {
+function Status({ }) {
+
   return (
     <div className='status-container'>
-        <form className='status-form'>
-      <h2>Status Page</h2>
-      <p>Your payment has been submitted, waiting admin to approve your registration.</p>
-      <p>Current Status: Pending</p>
-
-      <a href='/success'>Success Payment</a>
-      <a href='/failed'>Failed Payment</a>
+      <form className='status-form'>
+        <h2>Status Page</h2>
+        <p>Your payment has been submitted, waiting for admin approval.</p>
+        <p>Current Status: {'Pending'}</p>
       </form>
     </div>
   );

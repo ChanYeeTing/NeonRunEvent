@@ -185,6 +185,60 @@ export const getWinners = async () => {
   }
 };
 
+export const uploadPaymentProof = async (data) => {
+  try {
+    const response = await fetch("/api/upload-payment-proof", {
+      method: "POST",
+      body: data,
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Payment proof upload failed.");
+    }
+    return result;
+  } catch (error) {
+    throw new Error(error.message); 
+  }
+};
+
+// Function to update user status
+export const updateStatus = async (data) => {
+  try {
+    const response = await fetch("/api/update-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to update status.");
+    }
+    return result; // Return result if successful
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const fetchUserStatus = async (userId) => {
+  try {
+    const response = await fetch(`/api/userStatus/${userId}`, {
+      method: "GET",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to fetch user status.");
+    }
+
+    return result.status; // Return the user's status
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 // Function for fetching approved participants list
 export const approvedList = async () => {
   try {

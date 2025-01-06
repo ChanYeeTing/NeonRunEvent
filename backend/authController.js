@@ -98,9 +98,13 @@ router.post("/api/admin-login", async (req, res) => {
 
 router.get("/api/participantList", async (req, res) => {
   try {
-
     const userSnapshot = await db.collection("users").where("status", "!=", null).get();
-    const users = userSnapshot.docs.map((doc) => doc.data());
+    
+    // Map through each document and add the doc.id (uid) to the user data
+    const users = userSnapshot.docs.map((doc) => ({
+      uid: doc.id,  // Add the document ID as uid
+      ...doc.data()  // Spread the rest of the user data
+    }));
 
     res.status(200).json({ users });
   } catch (error) {
@@ -108,6 +112,7 @@ router.get("/api/participantList", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch participants" });
   }
 });
+
 
 // Route to fetch event statistics
 router.get("/api/event-stats", async (req, res) => {
@@ -306,66 +311,6 @@ router.get('/api/get-winners', async (req, res) => {
   } catch (error) {
     console.error('Error fetching images:', error);
     res.status(500).json({ error: 'Failed to fetch images', details: error.message });
-  }
-});
-
-// Route to fetch approved participants for ranking
-router.get("/api/approved-list", async (req, res) => {
-  try {
-    const userSnapshot = await db.collection("users").where("status", "==", "Approved").get();
-
-    // Map through documents and extract relevant fields
-    const users = userSnapshot.docs.map((doc) => {
-      const data = doc.data();
-      return {
-        name: data.fullName || "N/A", // Use default if the field is missing
-        icNumber: data.icNumber || "N/A",
-        contactNo: data.contactNumber || "N/A",
-        category: data.category || "N/A",
-        matricNo: data.school || "N/A",
-        package: data.package || "N/A",
-        rankAssign: data.rank || "N/A",
-      };
-    });
-
-    res.status(200).json({ users });
-  } catch (error) {
-    console.error("Error fetching approved participants:", error);
-    res.status(500).json({ error: "Failed to fetch approved participants" });
-  }
-});
-
-// Route to update winner list
-router.post("/api/update-winner-list", async (req, res) => {
-  const { winnersData } = req.body;  // Receiving 'winnersData' array
-
-  try {
-    // Reference to the 'users' collection in Firestore
-    const winnerListRef = db.collection("users");
-
-    // Loop through each winner data
-    await Promise.all(
-      winnersData.map(async (winner) => {
-        // Query the 'users' collection to find the document where icNumber matches
-        const userSnapshot = await winnerListRef.where("icNumber", "==", winner.icNumber).get();
-
-        if (!userSnapshot.empty) {
-          // If a match is found, use 'set' with 'merge: true' to add/update the rank field
-          const userDocRef = userSnapshot.docs[0].ref;
-          await userDocRef.set({
-            rank: winner.rank,
-          }, { merge: true });
-        } else {
-          // If no matching user is found, handle the case (optional)
-          console.log(`No user found with icNumber: ${winner.icNumber}`);
-        }
-      })
-    );
-
-    res.status(200).json({ message: 'Winner list updated successfully.' });
-  } catch (error) {
-    console.error("Error updating winner list:", error);
-    res.status(500).json({ error: 'Failed to update winner list.' });
   }
 });
 

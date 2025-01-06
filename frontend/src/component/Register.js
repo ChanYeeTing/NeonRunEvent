@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchUserStatus, registerParticipant } from '../utils/api'; // Import necessary APIs
+import { getAuth } from 'firebase/auth';
 import './Register.css';
 import Runner from '../image/runner.png';
-import { getAuth } from "firebase/auth";
-import { registerParticipant } from '../utils/api.js';
 
 function Register() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -17,85 +19,102 @@ function Register() {
     package: '',
     year: '',
     school: '',
-    tshirtSize: '', 
+    tshirtSize: '',
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true); // Track loading status
+
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (user) {
+        try {
+          const userStatus = await fetchUserStatus(user.uid);
+          if (userStatus) {
+            // Redirect based on status
+            if (userStatus === 'Approved') {
+              navigate('/success');
+            } else if (userStatus === 'Failed') {
+              navigate('/failed');
+            } else if (userStatus === 'Pending') {
+              navigate('/status');
+            }
+          } else {
+            setLoading(false); // Allow form to display if no status exists
+          }
+        } catch (error) {
+          console.error('Error checking status:', error);
+          setLoading(false); // Display the form on error
+        }
+      } else {
+        setLoading(false); // Display the form if user is not authenticated
+      }
+    };
+
+    checkStatus();
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const saveToFirestore = async () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-  
-    if (!user) {
-      console.log("User is not authenticated");
-      return;
-    }
-
-    try{
-      const registerData = {
-        ...formData,
-        userId: user.uid, // Include user UID to associate data with the user
-        createdAt: new Date(),
-        status: 'Pending',
-      }
-       const response = await registerParticipant(registerData);
-       console.log(response);
-    }
-    catch(error)
-    {
-      console.log(error.message);
-    }
-  };
-  
-
-  const handleNext = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
-
-    Object.keys(formData).forEach((key) => {
-      if (!formData[key] && !(key === 'tshirtSize' && formData.package !== 'B')) {
-        newErrors[key] = 'This field is required';
-      }
-    });
-
-    // Vlidation for IC number format
-    if (!/^\d{6}-\d{2}-\d{4}$/.test(formData.icNumber)) {
-      newErrors.icNumber = 'Invalid IC number format.';
+    // Validate formData (same validation logic as before)
+    if (!formData.fullName) {
+      newErrors.fullName = 'Full Name is required';
     }
 
-    // Validation for contact number format
-    if (!/^01\d-\d{7,8}$/.test(formData.contactNumber)) {
-      newErrors.contactNumber = 'Invalid contact number format.';
+    if (!formData.icNumber) {
+      newErrors.icNumber = 'IC Number is required';
     }
 
-    // Validation for matric number (6 digits only)
-    if (!/^(\d{6}|N\/A)$/i.test(formData.school)) {
-      newErrors.school = 'Matric number must be exactly 6 digits or "N/A".';
+    if (!formData.contactNumber) {
+      newErrors.contactNumber = 'Contact Number is required';
     }
 
-    //T-SHIRT size cannot be null for package B
+    if (!formData.eventEmail) {
+      newErrors.eventEmail = 'Email is required';
+    }
+
+    if (!formData.category) {
+      newErrors.category = 'Category is required';
+    }
+
+    if (!formData.package) {
+      newErrors.package = 'Package selection is required';
+    }
+
+    if (!formData.year) {
+      newErrors.year = 'Year selection is required';
+    }
+
     if (formData.package === 'B' && !formData.tshirtSize) {
-      newErrors.tshirtSize = 'Please select your t-shirt size';
+      newErrors.tshirtSize = 'T-shirt size is required for Package B';
     }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
-      setErrors({});
-      await saveToFirestore(); // Save data to Firestore
-     navigate("/payment");  // Navigate to payment if no errors
+      try {
+        await registerParticipant({ ...formData, userId: user.uid, status: 'Pending', createdAt: new Date() });
+        navigate('/status');
+      } catch (error) {
+        console.error('Error registering:', error);
+      }
     }
   };
 
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className="register-container">
-      <form className="register-form" onSubmit={handleNext}>
+      <form className="register-form" onSubmit={handleSubmit}>
         <h2>Register as a participant now!</h2>
 
         {/* Full Name */}
@@ -165,7 +184,7 @@ function Register() {
           {errors.category && <div className="error">{errors.category}</div>}
         </label>
 
-        {/* Matric Number */}
+        {/* Matric No */}
         <label>
           Matric No.
           <input
@@ -262,7 +281,7 @@ function Register() {
         )}
 
         {/* Next Button */}
-        <button type="submit" >Next</button>
+        <button type="submit">Submit</button>
       </form>
 
       {/* Running Image */}
@@ -274,3 +293,5 @@ function Register() {
 }
 
 export default Register;
+
+//need to click on the register page again to trigger the navigation

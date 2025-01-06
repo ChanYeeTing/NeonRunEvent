@@ -220,3 +220,22 @@ export const updateStatus = async (data) => {
     throw new Error(error.message);
   }
 };
+
+export const fetchUserStatus = async (userId) => {
+  try {
+    const response = await fetch(`/api/userStatus/${userId}`, {
+      method: "GET",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to fetch user status.");
+    }
+
+    return result.status; // Return the user's status
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+

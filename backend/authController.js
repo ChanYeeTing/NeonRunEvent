@@ -96,19 +96,6 @@ router.post("/api/admin-login", async (req, res) => {
   }
 });
 
-// router.get("/api/participantList", async (req, res) => {
-//   try {
-
-//     const userSnapshot = await db.collection("users").where("status", "!=", null).get();
-//     const users = userSnapshot.docs.map((doc) => doc.data());
-
-//     res.status(200).json({ users });
-//   } catch (error) {
-//     console.error("Error fetching participants:", error);
-//     res.status(500).json({ error: "Failed to fetch participants" });
-//   }
-// });
-
 router.get("/api/participantList", async (req, res) => {
   try {
     const userSnapshot = await db.collection("users").where("status", "!=", null).get();
@@ -396,6 +383,28 @@ router.post("/api/update-status", async (req, res) => {
     res.status(500).json({ error: "Failed to update status." });
   }
 });
+
+router.get("/api/userStatus/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Fetch the user document by ID
+    const userDoc = await db.collection("users").doc(userId).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userData = userDoc.data();
+
+    // Return the user's status
+    res.status(200).json({ status: userData.status });
+  } catch (error) {
+    console.error("Error fetching user status:", error);
+    res.status(500).json({ error: "Failed to fetch user status" });
+  }
+});
+
 
 
 module.exports = router;

@@ -374,4 +374,30 @@ router.post("/api/update-winner-list", async (req, res) => {
   }
 });
 
+// Route to fetch approved participants for ranking
+router.get("/api/kit-list", async (req, res) => {
+  try {
+    const userSnapshot = await db.collection("users").where("status", "==", "Approved").get();
+
+    // Map through documents and extract relevant fields
+    const users = userSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        name: data.fullName || "N/A", // Use default if the field is missing
+        icNumber: data.icNumber || "N/A",
+        contactNo: data.contactNumber || "N/A",
+        category: data.category || "N/A",
+        matricNo: data.school || "N/A",
+        package: data.package || "N/A",
+        tshirtSize: data.tshirtSize || "N/A",
+      };
+    });
+
+    res.status(200).json({ users });
+  } catch (error) {
+    console.error("Error fetching approved participants:", error);
+    res.status(500).json({ error: "Failed to fetch approved participants" });
+  }
+});
+
 module.exports = router;

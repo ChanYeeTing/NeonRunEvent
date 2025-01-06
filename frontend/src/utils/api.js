@@ -275,3 +275,20 @@ export const updateWinnerList = async (updateData) => {
     throw new Error(error.message);
   }
 };
+
+// Function for fetching approved participants list
+export const kitList = async () => {
+  try {
+    const response = await fetch("/api/kit-list", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Error fetching approved participants");
+    }
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};

@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import "./Authentication.css";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { register, login, adminLogin } from "../utils/api"; // Import API functions
 import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, updateProfile } from "firebase/auth";
 import { auth } from "../firebase/firebase-init";
+import { signOut } from 'firebase/auth';
 import { sendEmailVerification, createUserWithEmailAndPassword } from "firebase/auth";
 import LoadingOverlay from "./LoadingOverlay";
+import './Authentication.css'
+
 
 function Authentication() {
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ function Authentication() {
     setCredentials({ ...credentials, [name]: value });
   };
 
+
   const handleRegister = async (e) => {
     setError("");
     e.preventDefault();
@@ -31,22 +34,14 @@ function Authentication() {
       setLoading(true);
       const userCredential = await createUserWithEmailAndPassword(auth, credentials.email, credentials.password);
       const user = userCredential.user;
-      sessionStorage.setItem("role", "user");
+      localStorage.setItem("role", "user"); // Store role in localStorage
       const registerData = {
         user,
         userName: credentials.userName,
         email: credentials.email,
         role: "user"
-      }
+      };
       await register(registerData);
-
-      // await setDoc(doc(db, "users", userCredential.user.uid), {
-      //   userName: credentials.userName,
-      //   email: credentials.email,
-      //   password: credentials.password,
-      //   role: "user"
-      // });
-
       await sendEmailVerification(user);
       await updateProfile(user, { displayName: credentials.userName });
       setLoading(false);
@@ -69,26 +64,22 @@ function Authentication() {
       });
 
       if (data.token) {
+        await setPersistence(auth, browserLocalPersistence);
         await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
         setLoading(false);
-        await setPersistence(auth, browserLocalPersistence);
-        // Handle successful login
         alert("Login successful!");
-        sessionStorage.setItem("role", "user");
-      navigate("/"); // Redirect to homepage after successful login
+        localStorage.setItem("role", "user"); // Store role in localStorage
+        navigate("/"); // Redirect to homepage after successful login
       } else {
         setLoading(false);
-        // Handle error
         alert("Login failed. Please try again.");
       }
-
-
     } catch (err) {
       setLoading(false);
       setError(err.message);
     }
   };
-  
+
   const handleAdminLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -99,23 +90,20 @@ function Authentication() {
         password: credentials.password,
       });
 
-      if(data.token)
-      {
+      if (data.token) {
+        await setPersistence(auth, browserLocalPersistence);
         await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
         setLoading(false);
-        await setPersistence(auth, browserLocalPersistence);
         alert("Login successful!");
-        sessionStorage.setItem("role", "admin");
-      navigate("/admin-dashboard"); // Redirect to homepage after successful login
+        localStorage.setItem("role", "admin"); // Store role in localStorage
+        navigate("/admin-dashboard"); // Redirect to admin dashboard after successful login
       }
-      
     } catch (err) {
       setLoading(false);
       setError(err.message);
     }
   };
-  
-  
+
   return (
     <div className="auth-container">
       <LoadingOverlay loading={loading} />
@@ -147,15 +135,14 @@ function Authentication() {
 
         {authMode === "register" && (
           <form onSubmit={handleRegister}>
-
-            <input type="text" 
-            name="userName"
-            placeholder="Username" 
-            required 
-            value={credentials.userName}
-            onChange={handleInputChange}
+            <input
+              type="text"
+              name="userName"
+              placeholder="Username"
+              required
+              value={credentials.userName}
+              onChange={handleInputChange}
             />
-
             <input
               type="email"
               name="email"

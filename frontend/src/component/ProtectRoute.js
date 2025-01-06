@@ -4,7 +4,7 @@ import React from 'react';
 const ProtectedRoute = ({ children }) => {
 
 
-  return sessionStorage.getItem("role")==="admin" ? children : <Navigate to="/" />;
+  return localStorage.getItem("role")==="admin" ? children : <Navigate to="/" />;
 };
 
 export default ProtectedRoute;

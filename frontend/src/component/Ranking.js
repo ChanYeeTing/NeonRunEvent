@@ -1,20 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./Ranking.css";
+import { approvedList, updateWinnerList } from "../utils/api";
+import LoadingOverlay from "./LoadingOverlay";
 
 
 const Ranking = () => {
 
-    // Array of participants as provided
-    const [participants, setParticipants] = useState([
-        { id: 1, name: "John", icNumber: "010912-04-0143", contactNo: "011-3489028", category: "Student USM", matricNo: "157329", package: "B", rank: "No Rank" },
-        { id: 2, name: "Jane", icNumber: "050214-08-1321", contactNo: "012-6453243", category: "Student USM", matricNo: "158342", package: "A", rank: "No Rank" },
-        { id: 3, name: "Mike", icNumber: "011021-06-0143", contactNo: "018-3234324", category: "Public", matricNo: "N/A", package: "B", rank: "No Rank" },
-        { id: 4, name: "Emily", icNumber: "020502-04-0441", contactNo: "011-6754523", category: "Public", matricNo: "N/A", package: "B", rank: "No Rank" },
-        { id: 5, name: "Chris", icNumber: "031109-08-1274", contactNo: "011-78973242", category: "Student USM", matricNo: "157453", package: "B", rank: "No Rank" }
-    ]);
-
+  // Array of participants as provided
+  const [participants, setParticipants] = useState([]);
   const [icNumber, setIcNumber] = useState('');
-  const [filteredParticipants, setFilteredParticipants] = useState(participants);
+  const [filteredParticipants, setFilteredParticipants] = useState([]);
+  const [loading, setLoading] = useState(false); // Loading state
+
+  const fetchParticipants = async () => {
+    setLoading(true); // Show loading overlay
+    try {
+      const response = await approvedList();
+      const updatedParticipants = response.users.map((user) => ({
+        ...user,
+        rank: user.rankAssign || "No Rank",
+      }));
+      setParticipants(updatedParticipants);
+      setFilteredParticipants(updatedParticipants);
+    } catch (error) {
+      console.error("Error fetching participants:", error);
+    } finally {
+      setLoading(false); // Hide loading overlay
+    }
+  };
+
+  useEffect(() => {
+    fetchParticipants();
+  }, []); // Run only once on component mount
   
 
   const handleSearch = (icNumber) => {
@@ -24,16 +41,59 @@ const Ranking = () => {
     setFilteredParticipants(searchResults);
   };
 
-  const handleRankChange = (id, newRank) => {
+  const handleRankChange = (icNumber, newRank) => {
+    // Only check for uniqueness if the new rank is 1, 2, or 3
+    if (newRank === "1" || newRank === "2" || newRank === "3") {
+      const rankTaken = participants.some(participant => participant.rank === newRank && participant.icNumber !== icNumber);
+
+      if (rankTaken) {
+        alert(`Rank ${newRank} is already assigned to another participant. Please choose a different rank.`);
+        return; // Prevent rank change
+      }
+    }
+
     const updatedParticipants = participants.map(participant =>
-      participant.id === id ? { ...participant, rank: newRank } : participant
+      participant.icNumber === icNumber ? { ...participant, rank: newRank } : participant
     );
     setParticipants(updatedParticipants);
     setFilteredParticipants(updatedParticipants);
   };
 
+  const handleUpdate = async () => {
+    // Prepare the data to be updated
+    const updateData = filteredParticipants.map((participant) => {
+      return {
+        icNumber: participant.icNumber,
+        rank: participant.rank,
+      };
+    });
+
+    setLoading(true); // Show loading overlay
+    try {
+      await updateWinnerList(updateData);
+      alert("Ranking updated successfully.");
+      await fetchParticipants();
+    } catch (error) {
+      console.error("Error updating ranking:", error);
+      alert("Failed to update ranking.");
+    } finally {
+      setLoading(false); // Hide loading overlay
+    }
+  };
+
+  const getAvailableRanks = (currentRank) => {
+    const usedRanks = participants
+      .filter((participant) => participant.rank && participant.rank !== "Top 150" && participant.rank !== "No Rank")
+      .map((participant) => participant.rank);
+
+    const allRanks = ["1", "2", "3", "Top 150", "No Rank"];
+    return allRanks.filter((rank) => rank === currentRank || !usedRanks.includes(rank));
+  };
+  
+
   return (
     <div className='ranking-container'>
+      <LoadingOverlay loading={loading} />
       <h1>Admin Ranking Page</h1>
 
       <div className='search-section'>
@@ -64,16 +124,16 @@ const Ranking = () => {
         </thead>
         <tbody>
           {filteredParticipants.map((participant) => (
-            <tr key={participant.id}>
+            <tr key={participant.icNumber}>
               <td>
                 <select
-                  value={participant.rank}
-                  onChange={(e) => handleRankChange(participant.id, e.target.value)}>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="Top 150">Top 150</option>
-                  <option value="No Rank">No Rank</option>
+                  value={participant.rank || "No Rank"} // Default value if rank is not set
+                  onChange={(e) => handleRankChange(participant.icNumber, e.target.value)}>
+                  {getAvailableRanks(participant.rank).map((rank) => (
+                    <option key={rank} value={rank}>
+                      {rank}
+                    </option>
+                  ))}
                 </select>
               </td>
               <td>{participant.name}</td>
@@ -86,6 +146,14 @@ const Ranking = () => {
           ))}
         </tbody>
       </table>
+      
+      {/* Floating Update Button */}
+      <button
+        className="update-btn"
+        onClick={handleUpdate}
+      >
+        Update
+      </button>
 
     </div>
   );

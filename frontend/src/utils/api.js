@@ -312,3 +312,21 @@ export const updateKitList = async (updateData) => {
     throw new Error(error.message);
   }
 };
+
+export const uploadEcert = async (data) => {
+  try {
+    const response = await fetch("/api/upload-ecert", {
+      method: "POST",
+      body: data,
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Upload failed.");
+    }
+    return result; // Return result if successful
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+

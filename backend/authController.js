@@ -323,6 +323,7 @@ router.get("/api/approved-list", async (req, res) => {
     const users = userSnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
+        uid: doc.id,
         name: data.fullName || "N/A", // Use default if the field is missing
         icNumber: data.icNumber || "N/A",
         contactNo: data.contactNumber || "N/A",
@@ -330,6 +331,7 @@ router.get("/api/approved-list", async (req, res) => {
         matricNo: data.school || "N/A",
         package: data.package || "N/A",
         rankAssign: data.rank || "N/A",
+        ecertURL: data.ecertURL || "N/A",
       };
     });
 
@@ -433,5 +435,70 @@ router.post("/api/update-kit-list", async (req, res) => {
     res.status(500).json({ error: 'Failed to update kit collection list.' });
   }
 });
+
+// Route to upload e-certificates
+router.post("/api/upload-ecert", upload.single('ecert'), async (req, res) => {
+  try {
+    const { uid, icNumber } = req.body; // Extract participant's IC number from the request body
+    const file = req.file; // Extract the uploaded file
+
+    if (!file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    if (!uid || !icNumber) {
+      return res.status(400).json({ error: 'Both User ID and IC Number are required' });
+    }
+
+    // Set the filename as the current date and original file name
+    const fileName = `ecerts/${uid}/${Date.now()}_${file.originalname}`;
+    const fileUpload = bucket.file(fileName);
+
+    const stream = fileUpload.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
+
+    // Handle upload stream events
+    stream.on('error', (error) => {
+      console.error('Upload error:', error);
+      throw error;
+    });
+
+    // Wait for the upload to finish
+    await new Promise((resolve, reject) => {
+      stream.on('finish', resolve);
+      stream.end(file.buffer);
+    });
+
+    // Make the file publicly accessible
+    await fileUpload.makePublic();
+
+    // Get the public URL
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+
+    // Save the e-cert URL to Firestore for the matched user
+    const userSnapshot = await db.collection("users").where("icNumber", "==", icNumber).get();
+
+    if (!userSnapshot.empty) {
+      // Assuming the first document matches the IC number
+      const userDocRef = userSnapshot.docs[0].ref;
+
+      // Merge the e-cert URL into the user's document
+      await userDocRef.set({ ecertURL: publicUrl }, { merge: true });
+    } else {
+      console.log(`No user found with IC number: ${icNumber}`);
+      return res.status(404).json({ error: `User with IC number ${icNumber} not found` });
+    }
+
+    // Respond with the public URL of the uploaded file
+    res.status(200).json({ message: 'E-cert uploaded successfully', url: publicUrl });
+  } catch (error) {
+    console.error('Error uploading e-cert:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 module.exports = router;

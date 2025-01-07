@@ -62,3 +62,30 @@
     border-radius: 50%; 
     overflow: hidden;
 }
+
+.ecert-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.ecert-container h1 {
+  color: hotpink;
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.ecert-container p {
+  font-size: 18px;
+  color: blue;
+  text-decoration: underline;
+}
+
+.ecert-link {
+  color: white; /* Change link text color to white */
+  text-decoration: none; /* Remove underline */
+}
+
+.ecert-link:hover {
+  text-decoration: underline; /* Optional: Add underline on hover */
+}
+

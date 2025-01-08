@@ -100,9 +100,11 @@ function Register() {
       setErrors(newErrors);
     } else {
       try {
-        await registerParticipant({ ...formData, userId: user.uid, status: 'Pending', createdAt: new Date() });
-        navigate('/status');
+        //await registerParticipant({ ...formData, userId: user.uid, status: ' ', createdAt: new Date() });
+        //navigate('/payment');
+        navigate('/payment', { state: { formData } });
       } catch (error) {
+        alert("Please login to the website before registration.");
         console.error('Error registering:', error);
       }
     }

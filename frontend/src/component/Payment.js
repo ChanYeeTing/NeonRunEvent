@@ -1,13 +1,15 @@
 import React, {useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Payment.css'; 
 import QRImage from '../image/qr.jpg';
 import LoadingOverlay from './LoadingOverlay'; 
 import { getAuth } from "firebase/auth";
-import { uploadPaymentProof } from '../utils/api.js';
+import { uploadPaymentProof, registerParticipant } from '../utils/api.js';
 
 function Payment() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const formData = location.state?.formData || {}; 
 
   const [paymentProof, setPaymentProof] = useState(null);
   const [error, setError] = useState('');
@@ -43,12 +45,13 @@ function Payment() {
     }
 
     try {
-      const formData = new FormData();
+      const paymentData = new FormData();
       const userId = user.uid;
-      formData.append('paymentProof', paymentProof); // Append the selected file
-      formData.append('userId', userId); // Here you should pass the userId (from Firebase Authentication)
+      paymentData.append('paymentProof', paymentProof); // Append the selected file
+      paymentData.append('userId', userId);
 
-      const response = await uploadPaymentProof(formData); // Call the API to upload the payment proof
+      const response = await uploadPaymentProof(paymentData); // Call the API to upload the payment proof
+      await registerParticipant({ ...formData, userId: user.uid, status: 'Pending', createdAt: new Date() });
 
       if (response.url) {
         alert('Payment proof uploaded successfully!');

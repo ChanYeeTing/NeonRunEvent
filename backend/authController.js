@@ -500,5 +500,96 @@ router.post("/api/upload-ecert", upload.single('ecert'), async (req, res) => {
   }
 });
 
+router.post("/api/upload-payment-proof", upload.single('paymentProof'), async (req, res) => { 
+  try { 
+    const { userId } = req.body; 
+    const file = req.file; 
+ 
+    if (!file) { 
+      return res.status(400).json({ error: "No file uploaded." }); 
+    } 
+ 
+    const fileName = `payment_proofs/${Date.now()}_${file.originalname}`;
+    const fileUpload = bucket.file(fileName); 
+ 
+    const stream = fileUpload.createWriteStream({ 
+      metadata: { 
+        contentType: file.mimetype, 
+      }, 
+    }); 
+ 
+    stream.on('error', (error) => { 
+      console.error('Upload error:', error); 
+      throw error; 
+    }); 
+ 
+    await new Promise((resolve, reject) => { 
+      stream.on('finish', resolve); 
+      stream.end(file.buffer); 
+    }); 
+ 
+    await fileUpload.makePublic(); 
+ 
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+
+    // Save the URL and userId to Firestore 
+    await db.collection('users').doc(userId).set( 
+      { 
+      userId, 
+      paymentProofUrl: publicUrl, 
+      }, 
+      { merge: true } 
+    ); 
+ 
+    res.status(200).json({ message: "Payment proof uploaded successfully.", url: publicUrl }); 
+  } catch (error) { 
+    console.error(error); 
+    res.status(500).json({ error: "Failed to upload payment proof." }); 
+  } 
+}); 
+ 
+// Update User Status 
+router.post("/api/update-status", async (req, res) => { 
+  const { userId, status } = req.body; 
+ 
+  try { 
+    if (!userId || !status) { 
+      return res.status(400).json({ error: "userId and status are required." }); 
+    } 
+ 
+    // Update the status field in the database 
+    await db.collection("users").doc(userId).set( 
+      { status }, 
+      { merge: true } 
+    ); 
+ 
+    res.status(200).json({ message: "User status updated successfully." }); 
+  } catch (err) { 
+    console.error("Error updating status:", err); 
+    res.status(500).json({ error: "Failed to update status." }); 
+  } 
+}); 
+ 
+router.get("/api/userStatus/:userId", async (req, res) => { 
+  try { 
+    const { userId } = req.params; 
+ 
+    // Fetch the user document by ID 
+    const userDoc = await db.collection("users").doc(userId).get(); 
+ 
+    if (!userDoc.exists) { 
+      return res.status(404).json({ error: "User not found" }); 
+    } 
+ 
+    const userData = userDoc.data(); 
+ 
+    // Return the user's status 
+    res.status(200).json({ status: userData.status }); 
+  } catch (error) { 
+    console.error("Error fetching user status:", error); 
+    res.status(500).json({ error: "Failed to fetch user status" }); 
+  } 
+});
+
 
 module.exports = router;

@@ -101,7 +101,7 @@ function Register() {
     } else {
       try {
         await registerParticipant({ ...formData, userId: user.uid, status: 'Pending', createdAt: new Date() });
-        navigate('/status');
+        navigate('/payment');
       } catch (error) {
         console.error('Error registering:', error);
       }

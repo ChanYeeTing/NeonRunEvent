@@ -314,16 +314,144 @@ router.get('/api/get-winners', async (req, res) => {
   }
 });
 
-router.post("/api/upload-payment-proof", upload.single('paymentProof'), async (req, res) => {
+// Route to fetch approved participants for ranking
+router.get("/api/approved-list", async (req, res) => {
   try {
-    const { userId } = req.body;
-    const file = req.file;
+    const userSnapshot = await db.collection("users").where("status", "==", "Approved").get();
+
+    // Map through documents and extract relevant fields
+    const users = userSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        uid: doc.id,
+        name: data.fullName || "N/A", // Use default if the field is missing
+        icNumber: data.icNumber || "N/A",
+        contactNo: data.contactNumber || "N/A",
+        category: data.category || "N/A",
+        matricNo: data.school || "N/A",
+        package: data.package || "N/A",
+        rankAssign: data.rank || "N/A",
+        ecertURL: data.ecertURL || "N/A",
+      };
+    });
+
+    res.status(200).json({ users });
+  } catch (error) {
+    console.error("Error fetching approved participants:", error);
+    res.status(500).json({ error: "Failed to fetch approved participants" });
+  }
+});
+
+// Route to update winner list
+router.post("/api/update-winner-list", async (req, res) => {
+  const { winnersData } = req.body;  // Receiving 'winnersData' array
+
+  try {
+    // Reference to the 'users' collection in Firestore
+    const winnerListRef = db.collection("users");
+
+    // Loop through each winner data
+    await Promise.all(
+      winnersData.map(async (winner) => {
+        // Query the 'users' collection to find the document where icNumber matches
+        const userSnapshot = await winnerListRef.where("icNumber", "==", winner.icNumber).get();
+
+        if (!userSnapshot.empty) {
+          // If a match is found, use 'set' with 'merge: true' to add/update the rank field
+          const userDocRef = userSnapshot.docs[0].ref;
+          await userDocRef.set({
+            rank: winner.rank,
+          }, { merge: true });
+        } else {
+          // If no matching user is found, handle the case (optional)
+          console.log(`No user found with icNumber: ${winner.icNumber}`);
+        }
+      })
+    );
+
+    res.status(200).json({ message: 'Winner list updated successfully.' });
+  } catch (error) {
+    console.error("Error updating winner list:", error);
+    res.status(500).json({ error: 'Failed to update winner list.' });
+  }
+});
+
+// Route to fetch approved participants for ranking
+router.get("/api/kit-list", async (req, res) => {
+  try {
+    const userSnapshot = await db.collection("users").where("status", "==", "Approved").get();
+
+    // Map through documents and extract relevant fields
+    const users = userSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        name: data.fullName || "N/A", // Use default if the field is missing
+        icNumber: data.icNumber || "N/A",
+        contactNo: data.contactNumber || "N/A",
+        category: data.category || "N/A",
+        matricNo: data.school || "N/A",
+        package: data.package || "N/A",
+        tshirtSize: data.tshirtSize || "N/A",
+        raceKit: data.raceKit || "N/A",
+      };
+    });
+
+    res.status(200).json({ users });
+  } catch (error) {
+    console.error("Error fetching approved participants:", error);
+    res.status(500).json({ error: "Failed to fetch approved participants" });
+  }
+});
+
+// Route to update kit list
+router.post("/api/update-kit-list", async (req, res) => {
+  const { kitData } = req.body;  // Receiving 'winnersData' array
+
+  try {
+    // Reference to the 'users' collection in Firestore
+    const kitListRef = db.collection("users");
+
+    await Promise.all(
+      kitData.map(async (kit) => {
+        // Query the 'users' collection to find the document where icNumber matches
+        const userSnapshot = await kitListRef.where("icNumber", "==", kit.icNumber).get();
+
+        if (!userSnapshot.empty) {
+          // If a match is found, use 'set' with 'merge: true' to add/update the rank field
+          const userDocRef = userSnapshot.docs[0].ref;
+          await userDocRef.set({
+            raceKit: kit.collected ? "Collected" : "Not Collected",
+          }, { merge: true });
+        } else {
+          // If no matching user is found, handle the case (optional)
+          console.log(`No user found with icNumber: ${kit.icNumber}`);
+        }
+      })
+    );
+
+    res.status(200).json({ message: 'Kit Collection list updated successfully.' });
+  } catch (error) {
+    console.error("Error updating kit collection list:", error);
+    res.status(500).json({ error: 'Failed to update kit collection list.' });
+  }
+});
+
+// Route to upload e-certificates
+router.post("/api/upload-ecert", upload.single('ecert'), async (req, res) => {
+  try {
+    const { uid, icNumber } = req.body; // Extract participant's IC number from the request body
+    const file = req.file; // Extract the uploaded file
 
     if (!file) {
-      return res.status(400).json({ error: "No file uploaded." });
+      return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const fileName = `payment_proofs/${Date.now()}_${file.originalname}`;
+    if (!uid || !icNumber) {
+      return res.status(400).json({ error: 'Both User ID and IC Number are required' });
+    }
+
+    // Set the filename as the current date and original file name
+    const fileName = `ecerts/${uid}/${Date.now()}_${file.originalname}`;
     const fileUpload = bucket.file(fileName);
 
     const stream = fileUpload.createWriteStream({
@@ -332,79 +460,136 @@ router.post("/api/upload-payment-proof", upload.single('paymentProof'), async (r
       },
     });
 
+    // Handle upload stream events
     stream.on('error', (error) => {
       console.error('Upload error:', error);
       throw error;
     });
 
+    // Wait for the upload to finish
     await new Promise((resolve, reject) => {
       stream.on('finish', resolve);
       stream.end(file.buffer);
     });
 
+    // Make the file publicly accessible
     await fileUpload.makePublic();
 
+    // Get the public URL
     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
 
-    // Save the URL and userId to Firestore
-    await db.collection('users').doc(userId).set(
-      {
-      userId,
-      paymentProofUrl: publicUrl,
-      },
-      { merge: true }
-    );
+    // Save the e-cert URL to Firestore for the matched user
+    const userSnapshot = await db.collection("users").where("icNumber", "==", icNumber).get();
 
-    res.status(200).json({ message: "Payment proof uploaded successfully.", url: publicUrl });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to upload payment proof." });
-  }
-});
+    if (!userSnapshot.empty) {
+      // Assuming the first document matches the IC number
+      const userDocRef = userSnapshot.docs[0].ref;
 
-// Update User Status
-router.post("/api/update-status", async (req, res) => {
-  const { userId, status } = req.body;
-
-  try {
-    if (!userId || !status) {
-      return res.status(400).json({ error: "userId and status are required." });
+      // Merge the e-cert URL into the user's document
+      await userDocRef.set({ ecertURL: publicUrl }, { merge: true });
+    } else {
+      console.log(`No user found with IC number: ${icNumber}`);
+      return res.status(404).json({ error: `User with IC number ${icNumber} not found` });
     }
 
-    // Update the status field in the database
-    await db.collection("users").doc(userId).set(
-      { status },
-      { merge: true }
-    );
-
-    res.status(200).json({ message: "User status updated successfully." });
-  } catch (err) {
-    console.error("Error updating status:", err);
-    res.status(500).json({ error: "Failed to update status." });
-  }
-});
-
-router.get("/api/userStatus/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    // Fetch the user document by ID
-    const userDoc = await db.collection("users").doc(userId).get();
-
-    if (!userDoc.exists) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const userData = userDoc.data();
-
-    // Return the user's status
-    res.status(200).json({ status: userData.status });
+    // Respond with the public URL of the uploaded file
+    res.status(200).json({ message: 'E-cert uploaded successfully', url: publicUrl });
   } catch (error) {
-    console.error("Error fetching user status:", error);
-    res.status(500).json({ error: "Failed to fetch user status" });
+    console.error('Error uploading e-cert:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
+router.post("/api/upload-payment-proof", upload.single('paymentProof'), async (req, res) => { 
+  try { 
+    const { userId } = req.body; 
+    const file = req.file; 
+ 
+    if (!file) { 
+      return res.status(400).json({ error: "No file uploaded." }); 
+    } 
+ 
+    const fileName = `payment_proofs/${Date.now()}_${file.originalname}`;
+    const fileUpload = bucket.file(fileName); 
+ 
+    const stream = fileUpload.createWriteStream({ 
+      metadata: { 
+        contentType: file.mimetype, 
+      }, 
+    }); 
+ 
+    stream.on('error', (error) => { 
+      console.error('Upload error:', error); 
+      throw error; 
+    }); 
+ 
+    await new Promise((resolve, reject) => { 
+      stream.on('finish', resolve); 
+      stream.end(file.buffer); 
+    }); 
+ 
+    await fileUpload.makePublic(); 
+ 
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+
+    // Save the URL and userId to Firestore 
+    await db.collection('users').doc(userId).set( 
+      { 
+      userId, 
+      paymentProofUrl: publicUrl, 
+      }, 
+      { merge: true } 
+    ); 
+ 
+    res.status(200).json({ message: "Payment proof uploaded successfully.", url: publicUrl }); 
+  } catch (error) { 
+    console.error(error); 
+    res.status(500).json({ error: "Failed to upload payment proof." }); 
+  } 
+}); 
+ 
+// Update User Status 
+router.post("/api/update-status", async (req, res) => { 
+  const { userId, status } = req.body; 
+ 
+  try { 
+    if (!userId || !status) { 
+      return res.status(400).json({ error: "userId and status are required." }); 
+    } 
+ 
+    // Update the status field in the database 
+    await db.collection("users").doc(userId).set( 
+      { status }, 
+      { merge: true } 
+    ); 
+ 
+    res.status(200).json({ message: "User status updated successfully." }); 
+  } catch (err) { 
+    console.error("Error updating status:", err); 
+    res.status(500).json({ error: "Failed to update status." }); 
+  } 
+}); 
+ 
+router.get("/api/userStatus/:userId", async (req, res) => { 
+  try { 
+    const { userId } = req.params; 
+ 
+    // Fetch the user document by ID 
+    const userDoc = await db.collection("users").doc(userId).get(); 
+ 
+    if (!userDoc.exists) { 
+      return res.status(404).json({ error: "User not found" }); 
+    } 
+ 
+    const userData = userDoc.data(); 
+ 
+    // Return the user's status 
+    res.status(200).json({ status: userData.status }); 
+  } catch (error) { 
+    console.error("Error fetching user status:", error); 
+    res.status(500).json({ error: "Failed to fetch user status" }); 
+  } 
+});
 
 
 module.exports = router;

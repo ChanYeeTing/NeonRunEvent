@@ -5,7 +5,9 @@ import CountDown from './CountDown';
 import winner1 from '../image/contact-us-background.jpg';
 import winner2 from '../image/contact-us-background.jpg';
 import winner3 from '../image/contact-us-background.jpg';
-import { getMemories, getWinners } from '../utils/api';
+import { getMemories, getWinners, approvedList } from '../utils/api';
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from '../firebase/firebase-init';
 
 function PostEvent()
 {
@@ -28,6 +30,9 @@ function AfterEvent()
 {
     const [images, setImages] = useState([]);
     const [winners, setWinners] = useState([]);
+    const [eCertLink, setECertLink] = useState(null);
+
+    const [user] = useAuthState(auth); // Get current logged-in user
 
         useEffect(() => {
             const fetchMemories = async () => {
@@ -39,13 +44,25 @@ function AfterEvent()
                         return a.localeCompare(b); 
                     });
                     setWinners(sortedUrls);
+
+                    // Fetch approved list
+                    const approvedParticipants = await approvedList(); 
+                    const loggedInUser = approvedParticipants.users.find(
+                        (participant) => participant.uid === user?.uid
+                    );
+
+                    // Set e-cert link if the user is found
+                    if (loggedInUser) {
+                        setECertLink(loggedInUser.ecertURL);
+                    }
+
                 } catch (error) {
                     console.error(error); 
                 }
             };
     
             fetchMemories(); 
-        }, []); 
+        }, [user]); 
 
     return(
         <div className='after-event'>
@@ -82,6 +99,25 @@ function AfterEvent()
 
                 </div>
             </div>
+            <div className="ecert-container">
+                <h1>E-Cert</h1>
+                {eCertLink ? (
+                    <p>
+                        E-Cert Link:{" "}
+                        <a
+                            href={eCertLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ecert-link"
+                        >
+                            {eCertLink}
+                        </a>
+                    </p>
+                ) : (
+                    <p>No E-Cert available for your account.</p>
+                )}
+            </div>
+
         </div>
     );
 }

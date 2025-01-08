@@ -1,25 +1,42 @@
 import React from "react";
 import './KitCollection.css';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { kitList, updateKitList } from "../utils/api";
+import LoadingOverlay from "./LoadingOverlay";
+
 
 function KitCollection () {
 
-    const [participants, setParticipants] = useState([
-        { id: 1, name: "John", icNumber:"010912-04-0143", contactNo:"011-3489028", category: "Student USM", matricNo: "157329", package: "B", tshirtSize: "M", collected: false },
-        { id: 2, name: "Jane", icNumber:"050214-08-1321", contactNo:"012-6453243",  category: "Student USM", matricNo: "158342", package: "A", tshirtSize: "N/A", collected: false },
-        { id: 3, name: "Mike", icNumber:"011021-06-0143", contactNo:"018-3234324",  category: "Public", matricNo: "N/A", package: "B", tshirtSize: "S", collected: false },
-        { id: 4, name: "Emily", icNumber:"020502-04-0441", contactNo:"011-6754523",  category: "Public", matricNo: "N/A", package: "B", tshirtSize: "M", collected: false },
-        { id: 5, name: "Chris", icNumber:"031109-08-1274", contactNo:"011-78973242",  category: "Student USM", matricNo: "157453", package: "B", tshirtSize: "XL", collected: false }
-      ]);
+    const [participants, setParticipants] = useState([]);
+    const [packageFilter, setPackageFilter] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('');
+    const [collectedFilter, setCollectedFilter] = useState('');
+    const [loading, setLoading] = useState(false); // Loading state
 
-      const [packageFilter, setPackageFilter] = useState('');
-      const [categoryFilter, setCategoryFilter] = useState('');
-      const [collectedFilter, setCollectedFilter] = useState('');
+    const fetchParticipants = async () => {
+        setLoading(true); // Show loading overlay
+        try {
+            const response = await kitList();  // Fetching the participant list
+            const updatedParticipants = response.users.map((user) => ({
+                ...user,
+                collected: user.raceKit === "Collected" ? true : false,
+            }));
+            setParticipants(updatedParticipants);
+        } catch (error) {
+            console.error("Error fetching participants:", error);
+        } finally {
+            setLoading(false); // Hide loading overlay
+        }
+    };
 
-      const handleCheckboxChange = (id) => {
-        setParticipants((prevParticipants) =>
+    useEffect(() => {
+        fetchParticipants(); // Fetch participants once when the component mounts
+    }, []);
+
+    const handleCheckboxChange = (icNumber) => {
+       setParticipants((prevParticipants) =>
           prevParticipants.map((participant) =>
-            participant.id === id ? { ...participant, collected: !participant.collected } : participant
+            participant.icNumber === icNumber ? { ...participant, collected: !participant.collected } : participant
           )
         );
       };
@@ -38,9 +55,32 @@ function KitCollection () {
         return matchesPackage && matchesCategory && matchesCollected && matchesSearch;
       });
 
+      const handleUpdate = async () => {
+        // Prepare the data to be updated
+            const updateData = filteredParticipants.map((participant) => {
+              return {
+                icNumber: participant.icNumber,
+                collected: participant.collected,
+              };
+            });
+
+            setLoading(true); // Show loading overlay
+            try {
+              await updateKitList(updateData);
+              alert("Race Kit Collection updated successfully.");
+              await fetchParticipants();
+            } catch (error) {
+              console.error("Error updating race kit collection:", error);
+              alert("Failed to update race kit collection.");
+            } finally {
+                setLoading(false); // Hide loading overlay
+            }
+      };
+
  
     return (
         <div className="kit-container">
+            <LoadingOverlay loading={loading} />
             <h1>Race Kit Collection Checklist</h1>
             <div className="filter">
                 <label htmlFor="packageFilter">Filter by Package: </label>
@@ -59,7 +99,7 @@ function KitCollection () {
                 value={categoryFilter}
                 className="filter-selection">
                     <option value="">All</option>
-                    <option value="Student USM">Student USM</option>
+                    <option value="student">Student USM</option>
                     <option value="Public">Public</option>
                 </select>
 
@@ -96,7 +136,7 @@ function KitCollection () {
                 </thead>
                 <tbody>
                     {filteredParticipants.map(participant => (
-                        <tr key={participant.id}>
+                        <tr key={participant.icNumber}>
                             <td>{participant.name}</td>
                             <td>{participant.icNumber}</td>
                             <td>{participant.contactNo}</td>
@@ -105,12 +145,20 @@ function KitCollection () {
                             <td>{participant.package}</td>
                             <td>{participant.tshirtSize}</td>
                             <td>
-                                <input type="checkbox" checked={participant.collected} onChange={() => handleCheckboxChange(participant.id)}/>
+                                <input type="checkbox" checked={participant.collected} onChange={() => handleCheckboxChange(participant.icNumber)}/>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+
+            {/* Floating Update Button */}
+            <button
+                className="update-btn1"
+                onClick={handleUpdate}
+            >
+                Update
+            </button>
         </div>
     );
 }

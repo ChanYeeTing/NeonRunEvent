@@ -239,3 +239,94 @@ export const fetchUserStatus = async (userId) => {
   }
 };
 
+// Function for fetching approved participants list
+export const approvedList = async () => {
+  try {
+    const response = await fetch("/api/approved-list", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Error fetching approved participants");
+    }
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const updateWinnerList = async (updateData) => {
+  try {
+    const response = await fetch("/api/update-winner-list", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ winnersData: updateData }),  // Wrap updateData in 'winnersData' as expected in the backend
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Update failed.");
+    }
+    return result; // Return result if successful
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// Function for fetching approved participants list
+export const kitList = async () => {
+  try {
+    const response = await fetch("/api/kit-list", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Error fetching approved participants");
+    }
+    return result;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const updateKitList = async (updateData) => {
+  try {
+    const response = await fetch("/api/update-kit-list", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ kitData: updateData }),  
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Update failed.");
+    }
+    return result; // Return result if successful
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const uploadEcert = async (data) => {
+  try {
+    const response = await fetch("/api/upload-ecert", {
+      method: "POST",
+      body: data,
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Upload failed.");
+    }
+    return result; // Return result if successful
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+

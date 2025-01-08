@@ -100,7 +100,7 @@ function KitCollection () {
                 className="filter-selection">
                     <option value="">All</option>
                     <option value="student">Student USM</option>
-                    <option value="Public">Public</option>
+                    <option value="public">Public</option>
                 </select>
 
                 <label htmlFor="collectedFilter">Filter by Collected Status: </label>

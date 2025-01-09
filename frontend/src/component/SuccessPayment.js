@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getAuth } from 'firebase/auth'; // Firebase Authentication to get current user
-import { participantList } from '../utils/api'; // Import your participantList API
+import { getAuth } from 'firebase/auth';
+import { participantList } from '../utils/api';
 import './SuccessPayment.css';
 
 function SuccessPayment() {
-  const [userData, setUserData] = useState(null); // State to store user data
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error handling state
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -39,6 +39,7 @@ function SuccessPayment() {
 
     fetchUserData();
   }, []);
+  
 
   if (loading) {
     return <div>Loading...</div>; // Show loading message while fetching data
@@ -66,6 +67,18 @@ function SuccessPayment() {
         <p>Category: {userData?.category}</p>
         <p>Package: {userData?.package}</p>
         {userData?.package === 'B' && <p>T-shirt Size: {userData?.tshirtSize}</p>}
+        {userData?.ecertURL ? (
+          <div>
+            <p>
+              E-cert: {' '}
+              <a href={userData.ecertURL} target='_blank' rel='noopener noreferrer'>
+                View E-Certificate
+              </a>
+            </p>
+          </div>
+        ) : (
+          <p>E-cert: The e-cert will be uploaded after the event.</p>
+        )}
       </form>
     </div>
   );

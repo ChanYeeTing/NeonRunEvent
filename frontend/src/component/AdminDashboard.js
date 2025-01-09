@@ -21,24 +21,6 @@ function AdminDashboard () {
 
         },[]);
 
-    const participantData = {
-        totalParticipants: 5,
-        categories: [
-            { name: "Student USM", value: 3 },
-            { name: "Public", value: 2 },
-        ],
-        packages: [
-            { name: "A", value: 1 },
-            { name: "B", value: 4 },
-        ],
-        tshirtSizes: [
-            { size: "S", count: 1 },
-            { size: "M", count: 2 },
-            { size: "L", count: 0 },
-            { size: "XL", count: 1 },
-        ],
-    };
-
     const COLORS = ["hotpink", "#FFBB28", "#bb00ff"];
 
     return (

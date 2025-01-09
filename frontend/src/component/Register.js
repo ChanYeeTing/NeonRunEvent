@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchUserStatus, registerParticipant } from '../utils/api'; // Import necessary APIs
+import { fetchUserStatus } from '../utils/api'; // Import necessary APIs
 import { getAuth } from 'firebase/auth';
 import './Register.css';
 import Runner from '../image/runner.png';

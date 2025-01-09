@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ParticipantList.css";
-// import { db } from "../firebase/firebase-init.js"; // Uncomment when using Firestore
 import { participantList, updateStatus } from "../utils/api"; // Import custom API functions
-import GlobalState from "./global"; // Import GlobalState
 
 function ParticipantList() {
     const [participants, setParticipants] = useState([]);
@@ -50,8 +48,6 @@ function ParticipantList() {
             const response = await updateStatus({ userId, status: "Approved" });
             console.log("Status updated:", response.message);
 
-            // Update GlobalState
-            GlobalState.setLatestStatus("Approved");
         } catch (error) {
             console.error("Error updating status:", error);
         }
@@ -72,8 +68,6 @@ function ParticipantList() {
             const response = await updateStatus({ userId, status: "Failed" });
             console.log("Status updated:", response.message);
 
-            // Update GlobalState
-            GlobalState.setLatestStatus("Failed");
         } catch (error) {
             console.error("Error updating status:", error);
         }

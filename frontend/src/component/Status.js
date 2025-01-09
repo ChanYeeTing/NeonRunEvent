@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { fetchUserStatus } from '../utils/api.js';
+import React from 'react';
 import './Status.css';
 
-function Status({ }) {
+function Status( ) {
 
   return (
     <div className='status-container'>

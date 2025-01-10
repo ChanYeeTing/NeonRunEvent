@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './UploadDocument.css';
-import { uploadMemory, getMemories, getWinners, uploadWinner, approvedList, uploadEcert } from '../utils/api';
+import { uploadMemory, getMemories, getWinners, uploadWinner, approvedList, uploadEcert, updateEventStatus, getEventStatus } from '../utils/api';
 import LoadingOverlay from './LoadingOverlay';
 
 function UploadDocument() {
@@ -10,6 +10,34 @@ function UploadDocument() {
     const [loading, setLoading] = useState(false);
     const [participants, setParticipants] = useState([]);
     const [eCertFile, setECertFile] = useState({}); // Store file for each participant
+    const [afterEvent, setAfterEvent] = useState(false);
+
+
+
+    const handleToggle = async () => {
+        try {
+            setLoading(true);
+            await updateEventStatus(!afterEvent)
+            console.log(!afterEvent)
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    
+    useEffect(() => {
+        const fetchEventStatus = async () => {
+            try {
+                const status = await getEventStatus();
+                setAfterEvent(status.afterEvent);
+                setLoading(false);
+            } catch (error) {
+                console.error("Error fetching event status:", error);
+            }
+        };
+        fetchEventStatus();
+    }, [handleToggle]);
+
 
     const handleFileChange = (e) => {
         setFiles(Array.from(e.target.files)); // Convert FileList to array
@@ -119,16 +147,6 @@ function UploadDocument() {
             const response = await uploadEcert(data); // Ensure this matches your API
             alert(response.message);
             
-            // // Optional: Update participants or display success
-            // setParticipants((prevParticipants) =>
-            //     prevParticipants.map((participant) =>
-            //         participant.uid === participantId
-            //             ? { ...participant, ecertUrl: response.url }
-            //             : participant
-            //     )
-            // );
-
-            // Re-fetch participants to get the updated list with ecertUrl
             const updatedParticipantsResponse = await approvedList();
             const updatedParticipants = updatedParticipantsResponse.users.map((user) => ({
                 ...user,
@@ -151,6 +169,9 @@ function UploadDocument() {
         <div className="upload-container">
             <LoadingOverlay loading={loading}/>
             <h1>Upload Documents</h1>
+            <button onClick={handleToggle}>
+                {afterEvent ? "Disable After Event" : "Enable After Event"}
+            </button>
             <div>
                 <h2>Memories</h2>
                 <input type="file" multiple onChange={handleFileChange}  accept="image/*"/>

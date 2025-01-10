@@ -70,7 +70,6 @@ function Navbar({ setLoading })
                 </div>
                 }
             </nav>
-            {console.log(localStorage.getItem("role"), user)}
             {user[0] ? (
                 <div className='userContainer'>
                 <p className='userName'>{user[0]?.displayName}</p>

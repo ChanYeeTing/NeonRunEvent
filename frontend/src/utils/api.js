@@ -330,3 +330,38 @@ export const uploadEcert = async (data) => {
   }
 };
 
+export const getEventStatus = async () => {
+  try {
+    const response = await fetch("/api/event-status", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    });
+    const result = await response.json()
+    if(!response.ok)
+    {
+      throw new Error(result.error || "Error fetching event status");
+    }
+    return result;
+  }
+  catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const updateEventStatus = async (newStatus) => {
+  try {
+      const response = await fetch("/api/event-status-update", {
+          method: "PUT",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ afterEvent: newStatus }),
+      });
+
+      const result = await response.json();
+      
+  } catch (error) {
+      console.error("Error:", error);
+  }
+};
+

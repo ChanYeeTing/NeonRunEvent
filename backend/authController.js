@@ -592,4 +592,50 @@ router.get("/api/userStatus/:userId", async (req, res) => {
 });
 
 
+// Route to fetch event status
+router.get("/api/event-status", async (req, res) => {
+  try {
+    // Reference the specific event document
+    const eventDocRef = db.collection("event").doc("MRwNfwprUP9jOP3W8gMO");
+
+    // Get the document snapshot
+    const eventDocSnap = await eventDocRef.get();
+
+    if (eventDocSnap.exists) {
+      // Send afterEvent as a response
+      const afterEvent = eventDocSnap.data().afterEvent;
+      res.status(200).json({ afterEvent });
+    } else {
+      res.status(404).json({ error: "Event not found" });
+    }
+  } catch (error) {
+    console.error("Error fetching event status:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.put("/api/event-status-update", async (req, res) => {
+  const { afterEvent } = req.body; // Get the new status from the request body
+
+
+  try {
+      // Reference the specific event document
+      const eventDocRef = db.collection("event").doc("MRwNfwprUP9jOP3W8gMO");
+
+      // Check if the document exists
+      const eventDocSnap = await eventDocRef.get();
+      if (!eventDocSnap.exists) {
+          return res.status(404).json({ error: "Event not found" });
+      }
+
+      // Update the afterEvent field
+      await eventDocRef.update({ afterEvent });
+
+      res.status(200).json({ message: "Event status updated successfully", afterEvent });
+  } catch (error) {
+      console.error("Error updating event status:", error);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;

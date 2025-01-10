@@ -5,13 +5,27 @@ import CountDown from './CountDown';
 import winner1 from '../image/contact-us-background.jpg';
 import winner2 from '../image/contact-us-background.jpg';
 import winner3 from '../image/contact-us-background.jpg';
-import { getMemories, getWinners, approvedList } from '../utils/api';
+import { getMemories, getWinners, approvedList, getEventStatus } from '../utils/api';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from '../firebase/firebase-init';
 
 function PostEvent()
 {
     const [showAfterEvent, setShowAfterEvent] = useState(false)
+
+    useEffect(() => {
+        const fetchEventStatus = async () => {
+            try {
+                const status = await getEventStatus(); 
+                setShowAfterEvent(status.afterEvent); 
+            } catch (error) {
+                console.error("Error fetching event status:", error);
+            }
+        };
+
+        fetchEventStatus(); 
+    }, []); 
+
     return(
         <div className='post-event-container'>
            {showAfterEvent ? (
@@ -19,9 +33,9 @@ function PostEvent()
             ) : (
                 <>
                     <CountDown />
-                    <button onClick={() => setShowAfterEvent(true)} className="after">After Event</button>
                 </>
             )}
+
         </div>
     )
 }

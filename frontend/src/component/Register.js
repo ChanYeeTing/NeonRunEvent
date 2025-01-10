@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserStatus } from '../utils/api'; // Import necessary APIs
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import './Register.css';
 import Runner from '../image/runner.png';
 
 function Register() {
   const navigate = useNavigate();
   const auth = getAuth();
-  const user = auth.currentUser;
+  //const user = auth.currentUser;
+  const [currentUser, setUser] = useState(null);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -26,33 +27,39 @@ function Register() {
   const [loading, setLoading] = useState(true); // Track loading status
 
   useEffect(() => {
-    const checkStatus = async () => {
-      if (user) {
-        try {
-          const userStatus = await fetchUserStatus(user.uid);
-          if (userStatus) {
-            // Redirect based on status
-            if (userStatus === 'Approved') {
-              navigate('/success');
-            } else if (userStatus === 'Failed') {
-              navigate('/failed');
-            } else if (userStatus === 'Pending') {
-              navigate('/status');
-            }
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (!currentUser) {
+        alert("Please login to the website before registration.");
+        navigate('/login'); // Redirect to login if user is not authenticated
+        return;
+      }
+
+      setUser(currentUser);
+
+      try {
+        const userStatus = await fetchUserStatus(currentUser.uid);
+        if (userStatus) {
+          if (userStatus === 'Approved') {
+            navigate('/success');
+          } else if (userStatus === 'Failed') {
+            navigate('/failed');
+          } else if (userStatus === 'Pending') {
+            navigate('/status');
           } else {
             setLoading(false); // Allow form to display if no status exists
           }
-        } catch (error) {
-          console.error('Error checking status:', error);
-          setLoading(false); // Display the form on error
+        } else {
+          setLoading(false);
         }
-      } else {
-        setLoading(false); // Display the form if user is not authenticated
+      } catch (error) {
+        console.error('Error checking status:', error);
+        setLoading(false);
       }
-    };
+    });
 
-    checkStatus();
-  }, [user, navigate]);
+    // Cleanup listener on unmount
+    return () => unsubscribe();
+  }, [auth, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -100,11 +107,8 @@ function Register() {
       setErrors(newErrors);
     } else {
       try {
-        //await registerParticipant({ ...formData, userId: user.uid, status: ' ', createdAt: new Date() });
-        //navigate('/payment');
         navigate('/payment', { state: { formData } });
       } catch (error) {
-        alert("Please login to the website before registration.");
         console.error('Error registering:', error);
       }
     }

@@ -1,17 +1,39 @@
+name: CI Build and Deploy
+
+# Trigger the workflow when a push to main occurs
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    # 1. Check out the repository
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Setup Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+    # 2. Set up Node.js version (v16 in this case)
+    - name: Set up Node.js 16
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
 
-      - name: Install dependencies
-        run: npm install
+    # 3. Install dependencies
+    - name: Install dependencies
+      run: npm install
 
-      - name: Run build
-        run: npm run build
+    # 4. Run build command
+    - name: Run build
+      run: npm run build
+
+    # 5. Optionally, deploy the application (replace with your own deployment script)
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production..."
+        # Add your deployment steps here, such as uploading to a server or cloud provider

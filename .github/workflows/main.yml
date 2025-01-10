@@ -1,11 +1,7 @@
-name: CI Build and Deploy
+name: CI Build and Test2
 
-# Trigger the workflow when a push to main occurs
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -14,26 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Check out the repository
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # 2. Set up Node.js version (v16 in this case)
     - name: Set up Node.js 16
       uses: actions/setup-node@v3
       with:
         node-version: '16'
 
-    # 3. Install dependencies
+    - name: Cache Node modules
+      uses: actions/cache@v2
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-
+
     - name: Install dependencies
       run: npm install
 
-    # 4. Run build command
-    - name: Run build
+    - name: Run tests
+      run: npm test
+
+    - name: Build project
       run: npm run build
 
-    # 5. Optionally, deploy the application (replace with your own deployment script)
     - name: Deploy to production
       run: |
-        echo "Deploying to production..."
-        # Add your deployment steps here, such as uploading to a server or cloud provider
+        cd frontend
+        npm run deploy # Replace with actual deployment command

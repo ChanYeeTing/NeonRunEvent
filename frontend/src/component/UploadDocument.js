@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './UploadDocument.css';
-import { storage, ref, uploadBytesResumable, getDownloadURL } from '../firebase/firebase-init'; // Import Firebase Storage methods
+import { storage, ref, uploadBytesResumable, getDownloadURL, db } from '../firebase/firebase-init'; // Import Firebase Storage methods
 import { uploadMemory, getMemories, getWinners, uploadWinner, approvedList, uploadEcert, updateEventStatus, getEventStatus } from '../utils/api';
 import LoadingOverlay from './LoadingOverlay';
 
@@ -162,7 +162,7 @@ function UploadDocument() {
     }
     };
 
-    const handleECertUpload = async (participantId) => {
+    const handleECertUpload = async (participantId, icNumber) => {
         const file = eCertFile[participantId];
     
         if (!file) {
@@ -183,7 +183,6 @@ function UploadDocument() {
         uploadTask.on(
             'state_changed',
             (snapshot) => {
-                // Track upload progress (optional)
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 console.log('Upload is ' + progress + '% done');
             },
@@ -206,7 +205,22 @@ function UploadDocument() {
                         )
                     );
     
-                    alert('E-cert uploaded successfully');
+                    // Now, update the Firestore database for the matched icNumber
+                    const userSnapshot = await db.collection("users").where("icNumber", "==", icNumber).get();
+    
+                    if (!userSnapshot.empty) {
+                        const userDocRef = userSnapshot.docs[0].ref;
+    
+                        // Merge the e-cert URL into the user's document
+                        await userDocRef.set({ ecertURL: downloadURL }, { merge: true });
+    
+                        console.log("E-cert URL updated in Firestore");
+                    } else {
+                        console.log(`No user found with IC number: ${icNumber}`);
+                        alert(`No user found with IC number: ${icNumber}`);
+                    }
+    
+                    alert('E-cert uploaded and database updated successfully');
                 } catch (error) {
                     console.error('Error getting download URL:', error);
                     alert('Failed to retrieve the e-cert URL');

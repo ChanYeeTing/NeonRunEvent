@@ -91,7 +91,7 @@ function UploadDocument() {
         try {
             // Loop through files to upload them
             Array.from(files).forEach((file) => {
-                const fileRef = ref(storage, `winners/${Date.now()}_${file.name}`); // Create a reference to the storage location
+                const fileRef = ref(storage, `memories/${Date.now()}_${file.name}`); // Create a reference to the storage location
 
                 const uploadTask = uploadBytesResumable(fileRef, file); // Upload the file to Firebase
 
@@ -100,7 +100,6 @@ function UploadDocument() {
                     (snapshot) => {
                         // Track progress if needed
                         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log('Upload is ' + progress + '% done');
                     },
                     (error) => {
                         alert(error.message);
@@ -129,23 +128,38 @@ function UploadDocument() {
             return;
         }
         setLoading(true);
-        const data = new FormData();
-        files.forEach((file) => {
-            data.append('winners', file); // Match the key name with your backend
-        });
- 
-        try {
-            const response = await uploadWinner(data); // Ensure this matches your API
-            alert(response.message);
 
-            // Update the images state with the returned URLs
-            setWinners((prevImages) => [...prevImages, ...response.urls]);
-            
-        } catch (error) {
-            console.error(error);
-            alert('Failed to upload image');
+    // Process each file and upload it to Firebase Storage
+    const uploadedImages = [];
+
+    for (const file of files) {
+      const fileName = `winners/${Date.now()}_${file.name}`; // Create a unique name for the file
+      const fileRef = ref(storage, fileName); // Create a reference to the storage location
+
+      const uploadTask = uploadBytesResumable(fileRef, file); // Upload the file
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        },
+        (error) => {
+          alert(`Error: ${error.message}`);
+          setLoading(false);
+        },
+        () => {
+          // Once the upload is complete, get the file's public URL
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            uploadedImages.push(downloadURL);
+            if (uploadedImages.length === files.length) {
+            setWinners((prevImages) => [...prevImages, uploadedImages]);
+              setLoading(false);
+              alert('Upload successful');
+            }
+          });
         }
-        setLoading(false);
+      );
+    }
     };
 
     const handleECertUpload = async (participantId, icNumber) => {

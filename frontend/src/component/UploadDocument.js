@@ -162,7 +162,7 @@ function UploadDocument() {
     }
     };
 
-    const handleECertUpload = async (participantId, icNumber) => {
+    const handleECertUpload = async (participantId) => {
         const file = eCertFile[participantId];
     
         if (!file) {
@@ -172,67 +172,49 @@ function UploadDocument() {
     
         setLoading(true);
     
-        try {
-            // Step 1: Create a unique file reference in Firebase Storage
-            const fileRef = ref(storage, `ecerts/${participantId}/${Date.now()}_${file.name}`);
+        // Create a unique file name
+        const fileName = `ecerts/${participantId}/${Date.now()}_${file.name}`;
+        const fileRef = ref(storage, fileName); // Create a reference in Firebase Storage
     
-            // Step 2: Upload the file to Firebase Storage
-            const uploadTask = uploadBytesResumable(fileRef, file); // Upload the file to Firebase
+        // Upload the file
+        const uploadTask = uploadBytesResumable(fileRef, file);
     
-            uploadTask.on(
-                'state_changed',
-                (snapshot) => {
-                    // Track progress if needed
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('Upload is ' + progress + '% done');
-                },
-                (error) => {
-                    console.error('Upload error:', error);
-                    alert(error.message);
+        // Monitor the upload progress
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                // Track upload progress (optional)
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+            },
+            (error) => {
+                console.error('Upload error:', error);
+                alert('Error: ' + error.message);
+                setLoading(false);
+            },
+            async () => {
+                // Once the upload is complete, get the public URL
+                try {
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref());
+    
+                    // Update the participant list with the e-cert URL
+                    setParticipants((prevParticipants) =>
+                        prevParticipants.map((participant) =>
+                            participant.id === participantId
+                                ? { ...participant, ecertURL: downloadURL }
+                                : participant
+                        )
+                    );
+    
+                    alert('E-cert uploaded successfully');
+                } catch (error) {
+                    console.error('Error getting download URL:', error);
+                    alert('Failed to retrieve the e-cert URL');
+                } finally {
                     setLoading(false);
-                },
-                async () => {
-                    // Step 3: Once the upload is complete, get the public URL
-                    try {
-                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-    
-                        // Step 4: Save the e-cert URL to Firestore for the matched user
-                        const userSnapshot = await db.collection("users").where("icNumber", "==", icNumber).get();
-    
-                        if (!userSnapshot.empty) {
-                            // Assuming the first document matches the IC number
-                            const userDocRef = userSnapshot.docs[0].ref;
-    
-                            // Step 5: Merge the e-cert URL into the user's document
-                            await userDocRef.set({ ecertURL: downloadURL }, { merge: true });
-    
-                            // Update the state or notify the user of success
-                            setParticipants((prevParticipants) =>
-                                prevParticipants.map((participant) =>
-                                    participant.id === participantId
-                                        ? { ...participant, ecertURL: downloadURL }
-                                        : participant
-                                )
-                            );
-    
-                            alert('E-cert uploaded successfully');
-                        } else {
-                            console.log(`No user found with IC number: ${icNumber}`);
-                            alert(`User with IC number ${icNumber} not found`);
-                        }
-                    } catch (error) {
-                        console.error('Error getting download URL:', error);
-                        alert('Failed to retrieve the e-cert URL');
-                    } finally {
-                        setLoading(false);
-                    }
                 }
-            );
-        } catch (error) {
-            console.error('Error during e-cert upload:', error);
-            alert('Failed to upload e-cert');
-            setLoading(false);
-        }
+            }
+        );
     };
 
     return (

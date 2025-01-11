@@ -5,7 +5,8 @@
   "scripts": {
     "server": "nodemon index.js",
     "client": "npm run start --prefix ../frontend",
-    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "deploy": "firebase deploy --only functions"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +18,14 @@
   "dependencies": {
     "body-parser": "^1.20.3",
     "concurrently": "^9.1.0",
-    "express": "^4.21.1"
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "firebase": "^11.1.0",
+    "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.2.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "engines": {
+    "node": "20"
   }
 }

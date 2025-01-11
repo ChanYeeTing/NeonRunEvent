@@ -15,9 +15,9 @@ app.use(bodyParser.json()); // Parse incoming JSON requests
 app.use(authController); // This will handle routes like "/api/register" and "/api/login"
 
 // Set up your server
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// const PORT = 4000;
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
 
 exports.api = functions.https.onRequest(app);

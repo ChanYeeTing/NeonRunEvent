@@ -18,7 +18,6 @@ function UploadDocument() {
         try {
             setLoading(true);
             await updateEventStatus(!afterEvent)
-            console.log(!afterEvent)
         } catch (err) {
             console.error(err);
         }
@@ -41,7 +40,6 @@ function UploadDocument() {
 
     const handleFileChange = (e) => {
         setFiles(Array.from(e.target.files)); // Convert FileList to array
-        console.log(files);
     };
 
     const handleECertFileChange = (e, participantId) => {
@@ -154,7 +152,7 @@ function UploadDocument() {
                 ecertURL: user.ecertURL,
             }));
             setParticipants(updatedParticipants);
-            console.log(updatedParticipantsResponse);
+
 
         } catch (error) {
             console.error(error);

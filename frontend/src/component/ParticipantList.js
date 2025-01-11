@@ -46,7 +46,6 @@ function ParticipantList() {
 
             // Call API to update status in Firestore
             const response = await updateStatus({ userId, status: "Approved" });
-            console.log("Status updated:", response.message);
 
         } catch (error) {
             console.error("Error updating status:", error);
@@ -66,7 +65,6 @@ function ParticipantList() {
 
             // Call API to update status in Firestore
             const response = await updateStatus({ userId, status: "Failed" });
-            console.log("Status updated:", response.message);
 
         } catch (error) {
             console.error("Error updating status:", error);

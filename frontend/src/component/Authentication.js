@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { register, login, adminLogin } from "../utils/api"; // Import API functions
 import { signInWithEmailAndPassword, setPersistence, browserLocalPersistence, updateProfile } from "firebase/auth";
-import { auth } from "../firebase/firebase-init";
+import { auth, db } from "../firebase/firebase-init";
 import { signOut } from 'firebase/auth';
 import { sendEmailVerification, createUserWithEmailAndPassword } from "firebase/auth";
 import LoadingOverlay from "./LoadingOverlay";
 import './Authentication.css'
-
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 function Authentication() {
   const navigate = useNavigate();

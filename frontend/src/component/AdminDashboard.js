@@ -11,7 +11,6 @@ function AdminDashboard () {
       try {
         const data = await eventStatistics();
         setStatistics(data);
-        console.log(data);
       } catch (error) {
         console.error("Error fetching statistics:", error);
       }

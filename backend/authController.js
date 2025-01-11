@@ -13,7 +13,11 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // React dev server
+  origin: [
+    'http://localhost:3000',
+    'https://neonrun-d9e96.web.app',
+    'https://neonrun-d9e96.firebaseapp.com',
+  ],
   methods: ['GET', 'POST'],
 };
 

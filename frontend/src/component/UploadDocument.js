@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './UploadDocument.css';
+import { storage, ref, uploadBytesResumable, getDownloadURL } from '../firebase/firebase-init'; // Import Firebase Storage methods
 import { uploadMemory, getMemories, getWinners, uploadWinner, approvedList, uploadEcert, updateEventStatus, getEventStatus } from '../utils/api';
 import LoadingOverlay from './LoadingOverlay';
 
@@ -88,13 +89,34 @@ function UploadDocument() {
         });
         
         try {
-            const response = await uploadMemory(data); // Ensure this matches your API
-            alert(response.message);
+            // Loop through files to upload them
+            Array.from(files).forEach((file) => {
+                const fileRef = ref(storage, `winners/${Date.now()}_${file.name}`); // Create a reference to the storage location
 
-            // Update the images state with the returned URLs
-            setImages((prevImages) => [...prevImages, ...response.urls]);
-            
-        } catch (error) {
+                const uploadTask = uploadBytesResumable(fileRef, file); // Upload the file to Firebase
+
+                uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
+                        // Track progress if needed
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload is ' + progress + '% done');
+                    },
+                    (error) => {
+                        alert(error.message);
+                        setLoading(false);
+                    },
+                    () => {
+                        // Once the upload is complete, get the public URL
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            setImages((prevImages) => [...prevImages, downloadURL]);
+                            setLoading(false);
+                            alert("Upload Successful");
+                        });
+                    }
+                );
+            });
+         } catch (error) {
             console.error(error);
             alert('Failed to upload image');
         }

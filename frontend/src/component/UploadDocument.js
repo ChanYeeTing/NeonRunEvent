@@ -178,18 +178,42 @@ function UploadDocument() {
         data.append('icNumber', icNumber); // Append the participant's IC number
     
         try {
-            const response = await uploadEcert(data); // Ensure this matches your API
-            alert(response.message);
-            
-            const updatedParticipantsResponse = await approvedList();
-            const updatedParticipants = updatedParticipantsResponse.users.map((user) => ({
-                ...user,
-                rank: user.rankAssign || "No Rank",
-                ecertURL: user.ecertURL,
-            }));
-            setParticipants(updatedParticipants);
-
-
+            // Create a unique file reference in Firebase Storage (use participantId and timestamp for uniqueness)
+            const fileRef = ref(storage, `ecerts/${participantId}/${Date.now()}_${file.name}`);
+    
+            // Upload the file to Firebase Storage
+            const uploadTask = uploadBytesResumable(fileRef, file); // Upload the file to Firebase
+    
+            uploadTask.on(
+                'state_changed',
+                (snapshot) => {
+                    // Track progress if needed
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload is ' + progress + '% done');
+                },
+                (error) => {
+                    alert(error.message);
+                    setLoading(false);
+                },
+                () => {
+                    // Once the upload is complete, get the public URL
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        // Save the URL in the user's document or perform any other action as needed
+                        console.log('Upload successful! URL:', downloadURL);
+                        
+                        // Update the participant's record in your state (or Firestore, etc.)
+                        setParticipants((prevParticipants) => 
+                            prevParticipants.map((participant) =>
+                                participant.id === participantId
+                                    ? { ...participant, ecertURL: downloadURL }
+                                    : participant
+                            )
+                        );
+                        alert('E-cert uploaded successfully');
+                        setLoading(false);
+                    });
+                }
+            );
         } catch (error) {
             console.error(error);
             alert('Failed to upload e-cert.');

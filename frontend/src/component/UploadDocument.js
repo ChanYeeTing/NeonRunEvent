@@ -162,24 +162,24 @@ function UploadDocument() {
     }
     };
 
-    const handleECertUpload = async (participantId, icNumber) => {
+     const handleECertUpload = async (participantId, icNumber) => {
         const file = eCertFile[participantId];
         
         if (!file) {
             alert('Please select a file to upload for this participant.');
             return;
         }
-        
+    
         setLoading(true);
-        
+    
         // Create a unique file name for the certificate
         const fileName = `ecerts/${participantId}/${Date.now()}_${file.name}`;
         const fileRef = ref(storage, fileName); // Create a reference in Firebase Storage
-        
+    
         try {
             // Upload the file to Firebase Storage
             const uploadTask = uploadBytesResumable(fileRef, file);
-            
+    
             // Monitor the upload progress
             uploadTask.on(
                 'state_changed',
@@ -195,24 +195,32 @@ function UploadDocument() {
                 async () => {
                     // Once the upload is complete, get the public URL
                     const ecertURL = await getDownloadURL(uploadTask.snapshot.ref());
-                    
-                    // Now, update the Firestore database with the e-cert URL for the matched IC number
-                    const usersCollection = collection(db, "users");  // Ensure correct Firestore collection reference
-                    const q = query(usersCollection, where("icNumber", "==", icNumber));  // Query to find user by IC Number
     
-                    const querySnapshot = await getDocs(q);
-                    if (!querySnapshot.empty) {
-                        // If user is found, update e-cert URL
-                        const userDocRef = querySnapshot.docs[0].ref;
-                        await userDocRef.update({ ecertURL: ecertURL }); // Update the e-cert URL field
+                    // Update the participant list with the e-cert URL
+                    setParticipants((prevParticipants) =>
+                        prevParticipants.map((participant) =>
+                            participant.id === participantId
+                                ? { ...participant, ecertURL: ecertURL }
+                                : participant
+                        )
+                    );
+    
+                    // Now, update the Firestore database with the e-cert URL for the matched IC number
+                    const userSnapshot = await db.collection("users").where("icNumber", "==", icNumber).get();
+    
+                    if (!userSnapshot.empty) {
+                        const userDocRef = userSnapshot.docs[0].ref;
+    
+                        // Merge the e-cert URL into the user's document in Firestore
+                        await userDocRef.set({ ecertURL: ecertURL }, { merge: true });
     
                         console.log("E-cert URL updated in Firestore");
-                        alert('E-cert uploaded and database updated successfully');
                     } else {
                         console.log(`No user found with IC number: ${icNumber}`);
                         alert(`No user found with IC number: ${icNumber}`);
                     }
-                    
+    
+                    alert('E-cert uploaded and database updated successfully');
                     setLoading(false);
                 }
             );

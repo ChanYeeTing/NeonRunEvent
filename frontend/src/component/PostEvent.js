@@ -156,7 +156,7 @@ function AfterEvent()
                             rel="noopener noreferrer"
                             className="ecert-link"
                         >
-                            {eCertLink}
+                            View E-Certificate
                         </a>
                     </p>
                 ) : (

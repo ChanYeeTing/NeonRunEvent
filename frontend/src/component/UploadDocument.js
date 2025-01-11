@@ -164,7 +164,7 @@ function UploadDocument() {
 
     const handleECertUpload = async (participantId, icNumber) => {
         const file = eCertFile[participantId];
-        
+    
         if (!file) {
             alert('Please select a file to upload for this participant.');
             return;
@@ -172,16 +172,11 @@ function UploadDocument() {
     
         setLoading(true);
     
-        const data = new FormData();
-        data.append('ecert', file); // Append the e-cert file
-        data.append('uid', participantId); // Append the participant's UID
-        data.append('icNumber', icNumber); // Append the participant's IC number
-    
         try {
-            // Create a unique file reference in Firebase Storage (use participantId and timestamp for uniqueness)
+            // Step 1: Create a unique file reference in Firebase Storage
             const fileRef = ref(storage, `ecerts/${participantId}/${Date.now()}_${file.name}`);
     
-            // Upload the file to Firebase Storage
+            // Step 2: Upload the file to Firebase Storage
             const uploadTask = uploadBytesResumable(fileRef, file); // Upload the file to Firebase
     
             uploadTask.on(
@@ -192,36 +187,53 @@ function UploadDocument() {
                     console.log('Upload is ' + progress + '% done');
                 },
                 (error) => {
+                    console.error('Upload error:', error);
                     alert(error.message);
                     setLoading(false);
                 },
-                () => {
-                    // Once the upload is complete, get the public URL
-                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                        // Save the URL in the user's document or perform any other action as needed
-                        console.log('Upload successful! URL:', downloadURL);
-                        
-                        // Update the participant's record in your state (or Firestore, etc.)
-                        setParticipants((prevParticipants) => 
-                            prevParticipants.map((participant) =>
-                                participant.id === participantId
-                                    ? { ...participant, ecertURL: downloadURL }
-                                    : participant
-                            )
-                        );
-                        alert('E-cert uploaded successfully');
+                async () => {
+                    // Step 3: Once the upload is complete, get the public URL
+                    try {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+    
+                        // Step 4: Save the e-cert URL to Firestore for the matched user
+                        const userSnapshot = await db.collection("users").where("icNumber", "==", icNumber).get();
+    
+                        if (!userSnapshot.empty) {
+                            // Assuming the first document matches the IC number
+                            const userDocRef = userSnapshot.docs[0].ref;
+    
+                            // Step 5: Merge the e-cert URL into the user's document
+                            await userDocRef.set({ ecertURL: downloadURL }, { merge: true });
+    
+                            // Update the state or notify the user of success
+                            setParticipants((prevParticipants) =>
+                                prevParticipants.map((participant) =>
+                                    participant.id === participantId
+                                        ? { ...participant, ecertURL: downloadURL }
+                                        : participant
+                                )
+                            );
+    
+                            alert('E-cert uploaded successfully');
+                        } else {
+                            console.log(`No user found with IC number: ${icNumber}`);
+                            alert(`User with IC number ${icNumber} not found`);
+                        }
+                    } catch (error) {
+                        console.error('Error getting download URL:', error);
+                        alert('Failed to retrieve the e-cert URL');
+                    } finally {
                         setLoading(false);
-                    });
+                    }
                 }
             );
         } catch (error) {
-            console.error(error);
-            alert('Failed to upload e-cert.');
+            console.error('Error during e-cert upload:', error);
+            alert('Failed to upload e-cert');
+            setLoading(false);
         }
-    
-        setLoading(false);
     };
-    
 
     return (
         <div className="upload-container">

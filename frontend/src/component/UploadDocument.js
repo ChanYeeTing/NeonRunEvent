@@ -181,59 +181,59 @@ function UploadDocument() {
     }
     };
 
-    const handleECertUpload = async (participantId) => {
+    const handleECertUpload = (participantId) => {
         const file = eCertFile[participantId];
         if (!file) {
             alert('Please select a file to upload for this participant.');
             return;
         }
     
-        setLoading(true);  // Set loading to true before starting the upload
+        setLoading(true); // Set loading to true before starting the upload
     
-        try {
-            // Step 1: Create a reference to the storage location
-            const fileName = `ecerts/${participantId}/${Date.now()}_${file.name}`;
-            const fileRef = ref(storage, fileName);
+        // Step 1: Create a reference to the storage location
+        const fileName = `ecerts/${participantId}/${Date.now()}_${file.name}`;
+        const fileRef = ref(storage, fileName);
     
-            // Step 2: Upload the file to Firebase Storage
-            const uploadTask = uploadBytesResumable(fileRef, file);
+        // Step 2: Upload the file to Firebase Storage
+        const uploadTask = uploadBytesResumable(fileRef, file);
     
-            uploadTask.on(
-                'state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log(`Upload is ${progress.toFixed(2)}% done`);
-                },
-                (error) => {
-                    console.error('Upload error:', error);
-                    alert('Error during upload: ' + error.message);
-                    setLoading(false);  // Set loading to false on error
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                // Optionally handle progress updates
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log(`Upload is ${progress.toFixed(2)}% done`);
+            },
+            (error) => {
+                // Handle upload error
+                console.error('Upload error:', error);
+                alert('Error during upload: ' + error.message);
+                setLoading(false); // Set loading to false on error
+            },
+            async () => {
+                // Step 3: Once the upload is complete, get the file's public URL
+                try {
+                    const ecertURL = await getDownloadURL(fileRef);
+                    console.log(`eCert URL: ${ecertURL}`); // Log the eCert URL for debugging
+    
+                    // Optionally update UI with the e-cert URL
+                    setParticipants((prevParticipants) =>
+                        prevParticipants.map((participant) =>
+                            participant.uid === participantId
+                                ? { ...participant, ecertURL }
+                                : participant
+                        )
+                    );
+    
+                    alert('E-cert uploaded successfully'); // Show alert after upload completion
+                } catch (error) {
+                    console.error('Error getting eCert URL:', error);
+                    alert('Failed to get the eCert URL: ' + error.message);
+                } finally {
+                    setLoading(false); // Ensure loading is set to false after everything is done
                 }
-            );
-    
-            // Wait for the upload to complete
-            await uploadTask;
-    
-            // Step 3: Get the download URL once upload is complete
-            const ecertURL = await getDownloadURL(fileRef);
-            console.log(`eCert URL: ${ecertURL}`); // Log the eCert URL for debugging
-    
-            // Optionally update UI with the e-cert URL
-            setParticipants((prevParticipants) =>
-                prevParticipants.map((participant) =>
-                    participant.uid === participantId
-                        ? { ...participant, ecertURL }
-                        : participant
-                )
-            );
-    
-            alert('E-cert uploaded successfully'); // Show alert after upload completion
-        } catch (error) {
-            console.error('Upload error:', error);
-            alert('Upload failed: ' + error.message);
-        } finally {
-            setLoading(false);  // Ensure loading is set to false after everything is done
-        }
+            }
+        );
     };
 
     return (

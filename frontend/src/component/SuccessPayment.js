@@ -7,6 +7,7 @@ import { storage } from '../firebase/firebase-init';
 
 function SuccessPayment() {
   const [userData, setUserData] = useState(null);
+  const [eCertLink, setECertLink] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 

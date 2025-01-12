@@ -22,10 +22,10 @@ function ParticipantList() {
                 console.error("Error fetching participants:", error);
             }
         };
-    
+
         fetchParticipants();
     }, []);
-    
+
     // Filter participants based on category and package
     const filteredParticipants = participants.filter((participant) => {
         const matchesPackage = packageFilter ? participant.package === packageFilter : true;
@@ -46,7 +46,6 @@ function ParticipantList() {
 
             // Call API to update status in Firestore
             const response = await updateStatus({ userId, status: "Approved" });
-
         } catch (error) {
             console.error("Error updating status:", error);
         }
@@ -65,7 +64,6 @@ function ParticipantList() {
 
             // Call API to update status in Firestore
             const response = await updateStatus({ userId, status: "Failed" });
-
         } catch (error) {
             console.error("Error updating status:", error);
         }
@@ -160,7 +158,7 @@ function ParticipantList() {
                         </thead>
                         <tbody>
                             {pendingParticipants.map((participant) => (
-                                <tr key={participant.uid}> 
+                                <tr key={participant.uid}>
                                     <td>{participant.fullName}</td>
                                     <td>{participant.icNumber}</td>
                                     <td>{participant.contactNumber}</td>
@@ -236,7 +234,7 @@ function ParticipantList() {
             {modalImage && (
                 <div className="modal" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <img src={modalImage} alt="Payment Proof" className="modal-image" />
+                        <img src={modalImage} alt="Payment Proof" className="modal-image"/>
                         <div>
                             <button onClick={closeModal}>Close</button>
                         </div>

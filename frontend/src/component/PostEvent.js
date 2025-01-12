@@ -7,7 +7,8 @@ import winner2 from '../image/contact-us-background.jpg';
 import winner3 from '../image/contact-us-background.jpg';
 import { getMemories, getWinners, approvedList, getEventStatus } from '../utils/api';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from '../firebase/firebase-init';
+import { auth, storage, listAll } from '../firebase/firebase-init';
+import { ref, getDownloadURL } from "firebase/storage";
 
 function PostEvent()
 {
@@ -65,9 +66,40 @@ function AfterEvent()
                         (participant) => participant.uid === user?.uid
                     );
 
-                    // Set e-cert link if the user is found
+                    // If the user is found, fetch the latest uploaded E-Cert URL from Firebase Storage
                     if (loggedInUser) {
-                        setECertLink(loggedInUser.ecertURL);
+                        const eCertDir = `ecerts/${user.uid}/`; // Path to the user's E-Cert directory in Firebase Storage
+                        const eCertRef = ref(storage, eCertDir);
+                        
+                        // List all files in the user's directory
+                        listAll(eCertRef)
+                            .then((result) => {
+                                if (result.items.length > 0) {
+                                    // Sort files by timestamp (assuming filenames start with the timestamp)
+                                    const sortedFiles = result.items.sort((a, b) => {
+                                        return b.name.split('_')[0] - a.name.split('_')[0]; // Compare timestamps
+                                    });
+
+                                    // Get the latest file
+                                    const latestFileRef = sortedFiles[0];
+
+                                    // Fetch the download URL for the latest E-Cert file
+                                    getDownloadURL(latestFileRef)
+                                        .then((url) => {
+                                            setECertLink(url); // Set the URL to state
+                                        })
+                                        .catch((error) => {
+                                            console.error("Error fetching E-Cert:", error);
+                                            setECertLink(null); // Handle error case
+                                        });
+                                } else {
+                                    setECertLink(null); // No E-Cert found
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error listing E-Cert files:", error);
+                                setECertLink(null); // Handle error case
+                            });
                     }
 
                 } catch (error) {
@@ -124,7 +156,7 @@ function AfterEvent()
                             rel="noopener noreferrer"
                             className="ecert-link"
                         >
-                            {eCertLink}
+                            View E-Certificate
                         </a>
                     </p>
                 ) : (

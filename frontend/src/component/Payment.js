@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './Payment.css';
+import './Payment.css'; 
 import QRImage from '../image/qr.jpg';
-import LoadingOverlay from './LoadingOverlay';
+import LoadingOverlay from './LoadingOverlay'; 
 import { getAuth } from "firebase/auth";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { registerParticipant } from '../utils/api';
+import { uploadPaymentProof, registerParticipant } from '../utils/api';
 
 function Payment() {
   const navigate = useNavigate();
   const location = useLocation();
   const formData = location.state?.formData || {}; // Retrieve form data from the location state
-
+  
   const [paymentProof, setPaymentProof] = useState(null); // State to store the payment proof file
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); 
 
   // Back navigation handler
   const back = () => {
@@ -46,42 +45,29 @@ function Payment() {
     }
 
     try {
-      const storage = getStorage();
+      // Prepare the FormData object to send payment data
+      const paymentData = new FormData();
       const userId = user.uid;
-      const fileRef = ref(storage, `paymentProofs/${userId}_${Date.now()}_${paymentProof.name}`); // Unique file reference
+      paymentData.append('paymentProof', paymentProof); // Append the selected file
+      paymentData.append('userId', userId); // Append the user ID to link with the payment
 
-      const uploadTask = uploadBytesResumable(fileRef, paymentProof);
+      // Call the API function to upload the payment proof
+      const response = await uploadPaymentProof(paymentData);
 
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          // Optional: Track upload progress
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload is ${progress}% done`);
-        },
-        (error) => {
-          console.error("Upload error:", error.message);
-          setError('Failed to upload payment proof. Please try again.');
-          setLoading(false);
-        },
-        async () => {
-          // On successful upload, get the file URL
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          console.log("File available at", downloadURL);
+      if (response.url) {
+        // Register participant only after successful payment proof upload
+        await registerParticipant({
+          ...formData,
+          userId: user.uid,
+          status: 'Pending', // Mark the participant as pending
+          createdAt: new Date(), // Add the current date and time
+        });
 
-          // Proceed to register the participant
-          await registerParticipant({
-            ...formData,
-            userId: user.uid,
-            paymentProofUrl: downloadURL,
-            status: 'Pending',
-            createdAt: new Date(),
-          });
-
-          alert('Payment proof uploaded successfully!');
-          navigate("/status"); // Navigate to the status page
-        }
-      );
+        alert('Payment proof uploaded successfully!');
+        navigate("/status"); // Navigate to the status page
+      } else {
+        setError('Failed to upload payment proof. Please try again.');
+      }
     } catch (err) {
       console.error("Error uploading payment proof:", err.message);
       setError('Failed to upload payment proof. Please try again.');
@@ -104,10 +90,10 @@ function Payment() {
         <p>
           Please complete your payment by scanning the QR code below and uploading your proof of payment.
           Remarks: YOURNAME_PACKAGE (Example: ALI_PackageB)
-          <br /><br />
-          Package A: RM20
-          <br />
-          Package B: RM35
+          <br></br><br></br>
+          Package A : RM20
+          <br></br>
+          Package B : RM35
         </p>
 
         <div className="qr-code-container">
@@ -115,12 +101,12 @@ function Payment() {
         </div>
 
         <label>
-          Upload Proof of Payment:
-          <input
-            type="file"
-            name="paymentProof"
-            accept="image/*"
-            onChange={handleFileChange}
+          Upload Proof of Payment :
+          <input 
+            type="file" 
+            name="paymentProof" 
+            accept="image/*" 
+            onChange={handleFileChange} 
           />
         </label>
 

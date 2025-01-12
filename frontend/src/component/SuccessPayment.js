@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getAuth } from 'firebase/auth';
 import { participantList } from '../utils/api';
 import './SuccessPayment.css';
+import { ref, listAll, getDownloadURL } from "firebase/storage";
+import { storage } from '../firebase/firebase-init';
 
 function SuccessPayment() {
   const [userData, setUserData] = useState(null);
@@ -23,6 +25,32 @@ function SuccessPayment() {
 
           if (currentUser) {
             setUserData(currentUser); // Set the user data to state
+            
+            // Fetch the e-cert URL from Firebase Storage if the user is found
+            const eCertFolderPath = `ecerts/${user.uid}/`; // Path to user's E-Certs folder
+            const eCertFolderRef = ref(storage, eCertFolderPath);
+
+            // List all the files in the user's E-Cert folder
+            const fileList = await listAll(eCertFolderRef);
+
+            // Sort the files by the timestamp (based on file name) and get the latest file
+            const latestFile = fileList.items
+              .map(fileRef => ({
+                name: fileRef.name,
+                timestamp: parseInt(fileRef.name.split('_')[0]), // Extract timestamp from filename
+                fileRef
+              }))
+              .sort((a, b) => b.timestamp - a.timestamp) // Sort by latest timestamp
+              .find(() => true); // Get the first item (the latest)
+
+            // Fetch the download URL of the latest file
+            if (latestFile) {
+              const url = await getDownloadURL(latestFile.fileRef);
+              setECertLink(url); // Set the URL to state
+            } else {
+              setECertLink(null); // No file found
+            }
+
           } else {
             setError("User not found.");
           }
@@ -67,11 +95,11 @@ function SuccessPayment() {
         <p>Category: {userData?.category}</p>
         <p>Package: {userData?.package}</p>
         {userData?.package === 'B' && <p>T-shirt Size: {userData?.tshirtSize}</p>}
-        {userData?.ecertURL ? (
+        {eCertLink ? (
           <div>
             <p>
               E-cert: {' '}
-              <a href={userData.ecertURL} target='_blank' rel='noopener noreferrer'>
+              <a href={eCertLink} target='_blank' rel='noopener noreferrer'>
                 View E-Certificate
               </a>
             </p>

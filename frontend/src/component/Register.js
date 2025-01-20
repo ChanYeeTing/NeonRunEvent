@@ -78,25 +78,38 @@ function Register() {
     if (!formData.icNumber) {
       newErrors.icNumber = 'IC Number is required';
     }
+    else if(!/^\d{6}-\d{2}-\d{4}$/.test(formData.icNumber)) {
+          newErrors.icNumber = 'Invalid IC number format, please follow xxxxxx-xx-xxxx.';
+        }
 
     if (!formData.contactNumber) {
       newErrors.contactNumber = 'Contact Number is required';
     }
-
-    if (!formData.eventEmail) {
-      newErrors.eventEmail = 'Email is required';
-    }
+    else if (!/^01\d-\d{7,8}$/.test(formData.contactNumber)) {
+          newErrors.contactNumber = 'Invalid contact number format, please follow 01x-xxxxxxx.';
+        }
 
     if (!formData.category) {
       newErrors.category = 'Category is required';
     }
-
-    if (!formData.package) {
-      newErrors.package = 'Package selection is required';
+    
+    if (!formData.school) {
+      newErrors.category = 'Matric Number is required';
     }
+    else if (!/^(\d{6}|N\/A)$/i.test(formData.school)) {
+          newErrors.school = 'Matric number must be exactly 6 digits or "N/A".';
+        }
 
     if (!formData.year) {
       newErrors.year = 'Year selection is required';
+    }
+    
+    if (!formData.eventEmail) {
+      newErrors.eventEmail = 'Email is required';
+    }
+    
+    if (!formData.package) {
+      newErrors.package = 'Package selection is required';
     }
 
     if (formData.package === 'B' && !formData.tshirtSize) {
@@ -299,5 +312,3 @@ function Register() {
 }
 
 export default Register;
-
-//need to click on the register page again to trigger the navigation
